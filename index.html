@@ -5,238 +5,340 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RVCorp Worldwide | Infraestructura · Ciberseguridad · Automatización</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#050c18;--navy2:#090f1e;--navy3:#0d1628;--blue:#1756f8;--blue2:#3d74ff;--blue-dim:rgba(23,86,248,0.12);--gold:#c8982a;--gold2:#e8b84b;--white:#eef2ff;--muted:#6b7a99;--muted2:#8894b0;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--card:rgba(255,255,255,0.03);--font-h:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:var(--navy);color:var(--white);font-family:var(--font-b);font-size:16px;line-height:1.7;overflow-x:hidden;}
+:root{
+  --blue:#0047cc;--blue2:#0057f5;--blueL:#e8f0ff;--blueD:#003399;
+  --teal:#00b89c;--tealL:#e0faf5;
+  --gold:#d4891a;--goldL:#fff4e0;
+  --dark:#0d1117;--dark2:#1a2233;
+  --gray:#f4f6fb;--gray2:#e8edf7;
+  --text:#1a2233;--muted:#5a6a85;--muted2:#8494aa;
+  --white:#ffffff;--border:#dce4f0;--border2:#c8d4e8;
+  --f1:'Outfit',sans-serif;--f2:'DM Sans',sans-serif;
+  --sh:0 4px 32px rgba(0,71,204,.10);--sh2:0 2px 12px rgba(0,0,0,.07);
+  --sh3:0 8px 40px rgba(0,71,204,.14);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--white);color:var(--text);font-family:var(--f2);font-size:16px;line-height:1.7;overflow-x:hidden}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 60px;background:rgba(5,12,24,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
-.logo{font-family:var(--font-h);font-weight:800;font-size:19px;letter-spacing:-0.5px;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:8px;}
-.logo-dot{width:7px;height:7px;background:var(--gold);border-radius:50%;display:inline-block;}
-.nav-links{display:flex;gap:32px;list-style:none;}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;}
-.nav-links a:hover{color:var(--white);}
-.nav-cta{background:var(--blue);color:#fff;padding:10px 22px;border-radius:6px;font-size:13px;font-weight:500;text-decoration:none;transition:all .2s;}
-.nav-cta:hover{background:var(--blue2);transform:translateY(-1px);}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 60px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-sq{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--f1);font-weight:900;font-size:12px;color:#fff;letter-spacing:-.3px}
+.logo-name{font-family:var(--f1);font-weight:800;font-size:18px;color:var(--dark);letter-spacing:-.5px}
+.logo-name span{color:var(--blue)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;font-family:var(--f1);transition:color .2s}
+.nav-links a:hover{color:var(--blue)}
+.nav-phone{font-size:13px;font-weight:600;color:var(--muted);font-family:var(--f1);margin-right:8px}
+.btn-nav{background:var(--blue);color:#fff;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;font-family:var(--f1);transition:all .2s}
+.btn-nav:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:var(--sh)}
 
-/* HERO */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:140px 60px 80px;position:relative;overflow:hidden;}
-.glow1{position:absolute;top:-180px;right:-120px;width:800px;height:800px;background:radial-gradient(circle,rgba(23,86,248,.09) 0%,transparent 65%);pointer-events:none;}
-.glow2{position:absolute;bottom:-100px;left:-80px;width:600px;height:600px;background:radial-gradient(circle,rgba(200,152,42,.05) 0%,transparent 65%);pointer-events:none;}
-.eyebrow{display:inline-flex;align-items:center;gap:10px;background:rgba(23,86,248,.1);border:1px solid rgba(23,86,248,.22);border-radius:100px;padding:6px 18px;font-size:12px;color:#7aabff;margin-bottom:32px;width:fit-content;letter-spacing:.5px;font-weight:500;}
-.pulse{width:5px;height:5px;background:#4a8fff;border-radius:50%;animation:pulse 2s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
-.hero h1{font-family:var(--font-h);font-size:clamp(44px,5.8vw,78px);font-weight:800;line-height:1.04;letter-spacing:-2.5px;max-width:820px;margin-bottom:28px;}
-.accent{background:linear-gradient(95deg,#4a8fff,#a0c4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-sub{color:var(--muted2);font-size:18px;max-width:540px;margin-bottom:52px;font-weight:300;line-height:1.7;}
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
-.btn-p{background:var(--blue);color:#fff;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:500;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
-.btn-p:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:0 12px 36px rgba(23,86,248,.28);}
-.btn-s{background:transparent;color:var(--white);padding:14px 32px;border-radius:8px;font-size:15px;font-weight:400;text-decoration:none;border:1px solid var(--border2);transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
-.btn-s:hover{border-color:rgba(255,255,255,.25);background:var(--card);}
-.hero-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:64px;height:190px;border-radius:12px;overflow:hidden;opacity:.65;}
-.hero-strip img{width:100%;height:100%;object-fit:cover;filter:saturate(.6) brightness(.55);}
+/* ── TICKER ── */
+.ticker-wrap{background:var(--dark);border-bottom:1px solid rgba(255,255,255,.07);padding:0;overflow:hidden;height:42px;display:flex;align-items:center;margin-top:70px}
+.ticker-label{background:var(--blue);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;padding:0 20px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;font-family:var(--f1);text-transform:uppercase}
+.ticker-track{display:flex;animation:ticker 50s linear infinite;white-space:nowrap}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{padding:0 28px;font-size:12px;color:rgba(255,255,255,.6);border-right:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px;height:42px;font-family:var(--f1)}
+.ticker-item a{color:rgba(255,255,255,.65);text-decoration:none;transition:color .2s}
+.ticker-item a:hover{color:var(--teal)}
+.ticker-dot{width:5px;height:5px;background:var(--teal);border-radius:50%;flex-shrink:0}
+.ticker-source{color:var(--teal);font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase;margin-right:2px}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.stat{padding:34px 40px;text-align:center;border-right:1px solid var(--border);}
-.stat:last-child{border-right:none;}
-.stat-n{font-family:var(--font-h);font-size:40px;font-weight:800;line-height:1;margin-bottom:6px;}
-.stat-n span{color:var(--gold);}
-.stat-l{color:var(--muted);font-size:13px;}
+/* ── HERO ── */
+.hero{padding:72px 60px 80px;background:linear-gradient(140deg,#f0f5ff 0%,#e8f4ff 55%,#f0fff9 100%);position:relative;overflow:hidden;min-height:88vh;display:flex;align-items:center}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.5px,transparent 1.5px);background-size:32px 32px;opacity:.55;pointer-events:none}
+.hero-blob{position:absolute;top:-180px;right:-80px;width:700px;height:700px;background:radial-gradient(circle,rgba(0,71,204,.08) 0%,transparent 65%);pointer-events:none}
+.hero-blob2{position:absolute;bottom:-120px;left:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,184,156,.07) 0%,transparent 65%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:740px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--blueL);border:1px solid rgba(0,71,204,.2);border-radius:100px;padding:6px 16px;font-size:12px;font-family:var(--f1);font-weight:600;color:var(--blue);margin-bottom:28px}
+.hero-tag-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:var(--f1);font-size:clamp(42px,5.5vw,72px);font-weight:900;line-height:1.04;letter-spacing:-2px;margin-bottom:24px;color:var(--dark)}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero-sub{color:var(--muted);font-size:18px;max-width:560px;margin-bottom:44px;font-weight:300;line-height:1.7}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px}
+.btn-p{background:var(--blue);color:#fff;padding:14px 30px;border-radius:9px;font-size:15px;font-weight:600;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px;font-family:var(--f1)}
+.btn-p:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:var(--sh3)}
+.btn-s{background:var(--white);color:var(--dark);padding:14px 30px;border-radius:9px;font-size:15px;font-weight:500;text-decoration:none;border:1.5px solid var(--border2);transition:all .2s;display:inline-flex;align-items:center;gap:8px;font-family:var(--f1)}
+.btn-s:hover{border-color:var(--blue);color:var(--blue)}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+.hstat-n{font-family:var(--f1);font-size:36px;font-weight:900;color:var(--dark);line-height:1}
+.hstat-n span{color:var(--blue)}
+.hstat-l{color:var(--muted);font-size:12px;margin-top:3px;font-family:var(--f1)}
 
-/* SECTION */
-section{padding:96px 60px;position:relative;}
-.lbl{display:inline-block;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
-.sec-h{font-family:var(--font-h);font-size:clamp(28px,3.5vw,44px);font-weight:800;letter-spacing:-1.5px;line-height:1.08;max-width:580px;margin-bottom:16px;}
-.sec-d{color:var(--muted2);font-size:17px;max-width:520px;margin-bottom:60px;font-weight:300;}
+/* HERO IMAGE */
+.hero-images{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:60px;height:180px;border-radius:14px;overflow:hidden;opacity:.75}
+.hero-images img{width:100%;height:100%;object-fit:cover;filter:saturate(.8) brightness(.9)}
 
-/* SERVICES */
-.svc-bg{background:var(--navy2);}
-.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-.svc-card{background:var(--navy);padding:38px 34px;transition:background .2s;position:relative;overflow:hidden;}
-.svc-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .3s;}
-.svc-card:hover{background:var(--navy3);}
-.svc-card:hover::after{opacity:1;}
-.ic{width:50px;height:50px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
-.ic svg{width:24px;height:24px;}
-.ic-blue{background:rgba(23,86,248,.12);border:1px solid rgba(23,86,248,.2);}
-.ic-gold{background:rgba(200,152,42,.12);border:1px solid rgba(200,152,42,.2);}
-.ic-teal{background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.2);}
-.ic-purple{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.2);}
-.ic-orange{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.2);}
-.ic-green{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2);}
-.svc-card h3{font-family:var(--font-h);font-size:16px;font-weight:700;margin-bottom:10px;}
-.svc-card p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:16px;}
-.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px;}
-.tag{font-size:11px;padding:3px 9px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;color:var(--muted);white-space:nowrap;}
-.svc-link{font-size:12px;color:var(--blue2);text-decoration:none;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:gap .2s;}
-.svc-link:hover{gap:9px;}
+/* ── SECTION BASE ── */
+section{padding:90px 60px}
+.lbl{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;font-family:var(--f1)}
+.sec-h{font-family:var(--f1);font-size:clamp(26px,3.2vw,40px);font-weight:800;letter-spacing:-1px;line-height:1.1;max-width:580px;margin-bottom:14px;color:var(--dark)}
+.sec-d{color:var(--muted);font-size:16px;max-width:520px;margin-bottom:56px;font-weight:300}
 
-/* VISUAL SPLIT */
-.vis-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:480px;}
-.vis-img{position:relative;overflow:hidden;}
-.vis-img img{width:100%;height:100%;object-fit:cover;filter:saturate(.55) brightness(.45);}
-.vis-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(23,86,248,.25),rgba(5,12,24,.55));}
-.vis-content{padding:80px 60px;display:flex;flex-direction:column;justify-content:center;background:var(--navy2);}
-.vis-content h2{font-family:var(--font-h);font-size:clamp(26px,2.8vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:18px;line-height:1.1;}
-.vis-content p{color:var(--muted2);font-size:15px;margin-bottom:14px;font-weight:300;}
-.metrics{display:flex;gap:30px;margin-top:32px;}
-.met-n{font-family:var(--font-h);font-size:30px;font-weight:800;color:var(--gold2);line-height:1;}
-.met-l{color:var(--muted);font-size:12px;margin-top:4px;}
+/* ── SERVICES ── */
+.svc-bg{background:var(--gray)}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.svc-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:32px 28px;transition:all .25s;position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.svc-card:hover{border-color:rgba(0,71,204,.25);box-shadow:var(--sh3);transform:translateY(-3px)}
+.svc-card:hover::before{transform:scaleX(1)}
+.ic{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.ic svg{width:24px;height:24px}
+.ic-blue{background:var(--blueL);border:1px solid rgba(0,71,204,.15)}
+.ic-teal{background:var(--tealL);border:1px solid rgba(0,184,156,.2)}
+.ic-gold{background:var(--goldL);border:1px solid rgba(212,137,26,.2)}
+.ic-purple{background:#f0ecff;border:1px solid rgba(124,58,237,.15)}
+.ic-orange{background:#fff4ed;border:1px solid rgba(234,88,12,.15)}
+.ic-green{background:#f0fdf4;border:1px solid rgba(22,163,74,.15)}
+.svc-card h3{font-family:var(--f1);font-size:16px;font-weight:700;margin-bottom:9px;color:var(--dark)}
+.svc-card p{color:var(--muted);font-size:13.5px;line-height:1.65;margin-bottom:14px}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.tag{font-size:11px;padding:3px 9px;background:var(--gray);border:1px solid var(--border);border-radius:100px;color:var(--muted2);font-family:var(--f1);font-weight:500}
+.svc-cta{font-size:12px;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:5px;font-weight:600;font-family:var(--f1);transition:gap .2s}
+.svc-cta:hover{gap:9px}
 
-/* GALLERY */
-.gallery{display:grid;grid-template-columns:repeat(5,1fr);height:260px;overflow:hidden;}
-.g-item{position:relative;overflow:hidden;}
-.g-item img{width:100%;height:100%;object-fit:cover;filter:saturate(.45) brightness(.4);transition:all .5s;}
-.g-item:hover img{filter:saturate(.85) brightness(.65);transform:scale(1.06);}
-.g-lbl{position:absolute;bottom:14px;left:14px;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.55);}
+/* ── VISUAL SPLIT ── */
+.vis-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:460px}
+.vis-img{position:relative;overflow:hidden}
+.vis-img img{width:100%;height:100%;object-fit:cover}
+.vis-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,71,204,.35),rgba(0,0,0,.3))}
+.vis-content{padding:72px 60px;display:flex;flex-direction:column;justify-content:center;background:var(--dark)}
+.vis-content .lbl{color:var(--teal)}
+.vis-content h2{font-family:var(--f1);font-size:clamp(24px,2.6vw,36px);font-weight:800;letter-spacing:-.8px;margin-bottom:16px;line-height:1.1;color:#fff}
+.vis-content p{color:rgba(255,255,255,.6);font-size:14.5px;margin-bottom:12px;font-weight:300}
+.metrics{display:flex;gap:28px;margin-top:28px;flex-wrap:wrap}
+.met{text-align:left}
+.met-n{font-family:var(--f1);font-size:30px;font-weight:800;color:var(--gold);line-height:1}
+.met-l{color:rgba(255,255,255,.5);font-size:11px;margin-top:3px;font-family:var(--f1)}
 
-/* CLIENTS */
-.cli-bg{background:var(--navy2);}
-.cli-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;max-width:840px;}
-.cli-cat{background:var(--navy);padding:34px 38px;}
-.cat-lbl{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
-.cli-list{display:flex;flex-wrap:wrap;gap:7px;}
-.cpill{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:5px 13px;font-size:13px;color:#b0bdd8;}
+/* ── GALLERY STRIP ── */
+.gallery{display:grid;grid-template-columns:repeat(5,1fr);height:240px;overflow:hidden}
+.g-item{position:relative;overflow:hidden}
+.g-item img{width:100%;height:100%;object-fit:cover;filter:saturate(.7) brightness(.75);transition:all .5s}
+.g-item:hover img{filter:saturate(1) brightness(.9);transform:scale(1.06)}
+.g-lbl{position:absolute;bottom:12px;left:14px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);font-family:var(--f1)}
 
-/* PROFILE */
-.pro-bg{background:var(--navy2);}
-.pro-grid{display:grid;grid-template-columns:290px 1fr;gap:60px;align-items:start;}
-.pro-card{background:var(--navy);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-.pro-photo{aspect-ratio:3/4;overflow:hidden;background:var(--navy3);}
-.pro-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;}
-.pro-init{width:100%;height:100%;background:linear-gradient(160deg,#1a2540,#050c18);display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:60px;font-weight:800;color:rgba(23,86,248,.2);}
-.pro-info{padding:26px;}
-.pro-info h3{font-family:var(--font-h);font-size:18px;font-weight:800;margin-bottom:3px;}
-.pro-role{color:var(--gold);font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:18px;text-transform:uppercase;}
-.ci{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);margin-bottom:9px;}
-.ci a{color:var(--muted);text-decoration:none;transition:color .2s;}
-.ci a:hover{color:#7aabff;}
-.cdot{width:4px;height:4px;background:var(--blue2);border-radius:50%;flex-shrink:0;}
+/* ── NEWS TICKER SECTION ── */
+.news-bg{background:var(--gray)}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.news-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:22px;transition:all .2s;cursor:pointer}
+.news-card:hover{border-color:rgba(0,71,204,.3);box-shadow:var(--sh);transform:translateY(-2px)}
+.news-source{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;font-family:var(--f1)}
+.news-card h4{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:7px;color:var(--dark);font-family:var(--f1)}
+.news-card p{font-size:12.5px;color:var(--muted);line-height:1.6}
+.news-card .news-link{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-size:12px;color:var(--blue);text-decoration:none;font-weight:600;font-family:var(--f1);transition:gap .2s}
+.news-card .news-link:hover{gap:8px}
+.news-cta-bar{background:var(--blueL);border:1.5px solid rgba(0,71,204,.15);border-radius:10px;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.news-cta-bar p{color:var(--muted);font-size:14px;font-weight:400}
+.news-cta-bar a{color:var(--blue);text-decoration:none;font-weight:700;font-size:14px;font-family:var(--f1)}
+.news-cta-bar a:hover{color:var(--blue2)}
+/* Live news badge */
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,184,156,.1);border:1px solid rgba(0,184,156,.25);border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.5px;font-family:var(--f1);margin-left:10px;vertical-align:middle}
+.live-dot{width:5px;height:5px;background:var(--teal);border-radius:50%;animation:blink 1.5s ease-in-out infinite}
 
-/* SOCIAL ICONS */
-.social{display:flex;gap:8px;margin-top:18px;}
-.sb{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s;}
-.sb:hover{background:rgba(23,86,248,.15);border-color:rgba(23,86,248,.3);}
-.sb svg{width:15px;height:15px;}
+/* ── CLIENTS ── */
+.cli-bg{background:var(--white)}
+.cli-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:860px;margin-bottom:36px}
+.cli-cat{background:var(--gray);border:1.5px solid var(--border);border-radius:12px;padding:28px 32px}
+.cat-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;font-family:var(--f1)}
+.cli-list{display:flex;flex-wrap:wrap;gap:7px}
+.cpill{background:var(--white);border:1.5px solid var(--border);border-radius:6px;padding:5px 13px;font-size:13px;color:var(--dark);font-weight:400}
+/* Tech logos row */
+.logos-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.logo-box{background:var(--gray);border:1px solid var(--border);border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted);font-family:var(--f1);white-space:nowrap}
 
-.pro-content h2{font-family:var(--font-h);font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:18px;line-height:1.15;}
-.pro-content p{color:var(--muted2);font-size:15px;margin-bottom:14px;font-weight:300;}
-.sk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:28px;}
-.sk{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:15px 18px;}
-.sk h4{font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;}
-.sk p{font-size:12px;color:var(--muted);margin:0;line-height:1.5;}
-.certs{display:flex;flex-wrap:wrap;gap:7px;margin-top:26px;}
-.cert{background:rgba(200,152,42,.08);border:1px solid rgba(200,152,42,.18);border-radius:6px;padding:5px 13px;font-size:11px;color:#d4b050;font-weight:500;}
+/* ── SOLUTIONS ── */
+.sol-bg{background:var(--gray)}
+.sol-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.sol-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:28px 28px 24px;transition:all .2s}
+.sol-card:hover{border-color:rgba(0,71,204,.25);box-shadow:var(--sh)}
+.sol-num{font-family:var(--f1);font-size:36px;font-weight:900;color:var(--blueL);line-height:1;margin-bottom:10px}
+.sol-card h3{font-family:var(--f1);font-size:16px;font-weight:700;color:var(--dark);margin-bottom:8px}
+.sol-card p{color:var(--muted);font-size:14px;line-height:1.6}
+.sol-link{display:inline-flex;align-items:center;gap:5px;margin-top:12px;font-size:12.5px;color:var(--blue);text-decoration:none;font-weight:700;font-family:var(--f1);transition:gap .2s}
+.sol-link:hover{gap:9px}
 
-/* CONTACT */
-.con-bg{background:var(--navy);}
-.con-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
-.con-info h2{font-family:var(--font-h);font-size:clamp(24px,3vw,36px);font-weight:800;letter-spacing:-1px;margin-bottom:14px;line-height:1.1;}
-.con-info p{color:var(--muted2);font-size:16px;margin-bottom:30px;font-weight:300;}
-.cdet{display:flex;align-items:flex-start;gap:14px;margin-bottom:22px;}
-.cico{width:40px;height:40px;border-radius:10px;background:var(--blue-dim);border:1px solid rgba(23,86,248,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.cico svg{width:17px;height:17px;}
-.ctxt h4{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;}
-.ctxt a,.ctxt p{font-size:14px;color:var(--muted2);text-decoration:none;font-weight:300;}
-.ctxt a:hover{color:#7aabff;}
+/* ── PROFILE ── */
+.pro-bg{background:var(--white)}
+.pro-grid{display:grid;grid-template-columns:280px 1fr;gap:56px;align-items:start}
+.pro-card{background:var(--gray);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.pro-photo{aspect-ratio:3/4;overflow:hidden;background:var(--gray2)}
+.pro-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.pro-init{width:100%;height:100%;background:linear-gradient(160deg,var(--blueL),var(--gray));display:flex;align-items:center;justify-content:center;font-family:var(--f1);font-size:60px;font-weight:900;color:rgba(0,71,204,.2)}
+.pro-info{padding:24px}
+.pro-info h3{font-family:var(--f1);font-size:18px;font-weight:800;margin-bottom:2px;color:var(--dark)}
+.pro-role{color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:16px;text-transform:uppercase;font-family:var(--f1)}
+.ci{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px}
+.ci a{color:var(--muted);text-decoration:none;transition:color .2s}
+.ci a:hover{color:var(--blue)}
+.cdot{width:4px;height:4px;background:var(--blue);border-radius:50%;flex-shrink:0}
+/* SOCIAL BUTTONS */
+.social{display:flex;gap:8px;margin-top:16px}
+.sb{width:36px;height:36px;border-radius:9px;background:var(--white);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s}
+.sb:hover{background:var(--blueL);border-color:rgba(0,71,204,.3);transform:translateY(-1px)}
+.sb svg{width:15px;height:15px}
+.sb-li svg{fill:var(--muted2)}
+.sb-wa svg{fill:var(--muted2)}
+.sb-gh svg{fill:var(--muted2)}
+.sb-em svg{stroke:var(--muted2);fill:none}
+.sb:hover .sb-li svg,.sb:hover .sb-wa svg,.sb:hover .sb-gh svg{fill:var(--blue)}
+.sb:hover .sb-em svg{stroke:var(--blue)}
+.pro-content h2{font-family:var(--f1);font-size:clamp(24px,2.8vw,34px);font-weight:800;letter-spacing:-.8px;margin-bottom:16px;line-height:1.1;color:var(--dark)}
+.pro-content p{color:var(--muted);font-size:15px;margin-bottom:13px;font-weight:300}
+.sk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:26px}
+.sk{background:var(--gray);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px}
+.sk h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:3px;font-family:var(--f1)}
+.sk p{font-size:12px;color:var(--muted);margin:0;line-height:1.5}
+.certs{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px}
+.cert{background:var(--goldL);border:1px solid rgba(212,137,26,.2);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--gold);font-weight:600;font-family:var(--f1)}
 
+/* ── CONTACT ── */
+.con-bg{background:var(--gray)}
+.con-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.con-info h2{font-family:var(--f1);font-size:clamp(22px,2.8vw,34px);font-weight:800;letter-spacing:-.8px;margin-bottom:12px;line-height:1.1;color:var(--dark)}
+.con-info p{color:var(--muted);font-size:16px;margin-bottom:28px;font-weight:300}
+.cdet{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px}
+.cico{width:40px;height:40px;border-radius:10px;background:var(--blueL);border:1px solid rgba(0,71,204,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cico svg{width:17px;height:17px;stroke:var(--blue);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ctxt h4{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:2px;font-family:var(--f1);text-transform:uppercase;letter-spacing:.3px}
+.ctxt a,.ctxt p{font-size:14px;color:var(--muted);text-decoration:none;font-weight:300}
+.ctxt a:hover{color:var(--blue)}
 /* FORM */
-.form-wrap{background:var(--navy2);border:1px solid var(--border);border-radius:14px;padding:38px;}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-.fg{margin-bottom:14px;}
-.fg label{display:block;font-size:11px;font-weight:600;color:var(--muted2);margin-bottom:7px;letter-spacing:.3px;text-transform:uppercase;}
-.fg input,.fg select,.fg textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:8px;padding:12px 15px;color:var(--white);font-family:var(--font-b);font-size:14px;transition:border-color .2s;outline:none;-webkit-appearance:none;appearance:none;}
-.fg select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:rgba(23,86,248,.5);background:rgba(23,86,248,.04);}
-.fg textarea{resize:vertical;min-height:118px;line-height:1.6;}
-.fg input::placeholder,.fg textarea::placeholder{color:var(--muted);}
-.btn-form{width:100%;background:var(--blue);color:#fff;padding:14px;border-radius:8px;font-size:15px;font-weight:500;border:none;cursor:pointer;transition:all .2s;font-family:var(--font-b);display:flex;align-items:center;justify-content:center;gap:8px;}
-.btn-form:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 12px 36px rgba(23,86,248,.28);}
-.fnote{text-align:center;font-size:12px;color:var(--muted);margin-top:11px;}
+.form-wrap{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:36px;box-shadow:var(--sh2)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--muted2);margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase;font-family:var(--f1)}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--gray);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--dark);font-family:var(--f2);font-size:14px;transition:border-color .2s;outline:none;-webkit-appearance:none;appearance:none}
+.fg select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6a85' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(0,71,204,.07)}
+.fg textarea{resize:vertical;min-height:115px;line-height:1.6}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--muted2)}
+.btn-form{width:100%;background:var(--blue);color:#fff;padding:13px;border-radius:9px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;font-family:var(--f1);display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-form:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:var(--sh3)}
+.fnote{text-align:center;font-size:11.5px;color:var(--muted2);margin-top:10px;font-family:var(--f1)}
 
-/* FOOTER */
-footer{padding:38px 60px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;}
-.flogo{font-family:var(--font-h);font-weight:800;font-size:16px;display:flex;align-items:center;gap:5px;}
-.flinks{display:flex;gap:26px;}
-.flinks a{color:var(--muted);font-size:13px;text-decoration:none;transition:color .2s;}
-.flinks a:hover{color:var(--white);}
-.fcopy{color:var(--muted);font-size:12px;}
+/* ── FOOTER ── */
+footer{padding:36px 60px;border-top:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;background:var(--white)}
+.flogo{font-family:var(--f1);font-weight:900;font-size:16px;color:var(--dark);display:flex;align-items:center;gap:6px}
+.flogo span{color:var(--blue)}
+.flinks{display:flex;gap:24px;flex-wrap:wrap}
+.flinks a{color:var(--muted);font-size:13px;text-decoration:none;font-family:var(--f1);transition:color .2s}
+.flinks a:hover{color:var(--blue)}
+.fcopy{color:var(--muted2);font-size:12px;font-family:var(--f1)}
 
+/* ── RESPONSIVE ── */
 @media(max-width:960px){
-  nav{padding:16px 22px;}.nav-links{display:none;}
-  section{padding:56px 22px;}.hero{padding:108px 22px 56px;}
-  .stats{grid-template-columns:repeat(2,1fr);}.stat{border-right:none;border-bottom:1px solid var(--border);}
-  .svc-grid,.vis-wrap,.con-grid,.pro-grid,.cli-grid{grid-template-columns:1fr;}
-  .vis-img{height:220px;}.gallery{grid-template-columns:repeat(3,1fr);}
-  .hero-strip{height:130px;}.frow{grid-template-columns:1fr;}
+  nav{padding:0 22px;}.nav-links{display:none;}
+  section{padding:56px 22px;}
+  .hero{padding:28px 22px 56px;}
+  .svc-grid{grid-template-columns:1fr;}
+  .vis-wrap{grid-template-columns:1fr;}.vis-img{height:220px;}
+  .gallery{grid-template-columns:repeat(3,1fr);}
+  .news-grid{grid-template-columns:1fr;}
+  .cli-grid,.sol-grid,.con-grid,.pro-grid{grid-template-columns:1fr;}
+  .frow{grid-template-columns:1fr;}
+  .hero-images{height:120px;}
   footer{flex-direction:column;padding:28px 22px;text-align:center;}
 }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <a href="#" class="logo">RVCorp<span class="logo-dot"></span></a>
+  <a href="#" class="nav-logo">
+    <div class="logo-sq">RV</div>
+    <div class="logo-name">RVCorp<span>.</span></div>
+  </a>
   <ul class="nav-links">
     <li><a href="#servicios">Servicios</a></li>
-    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#noticias">Noticias Tech</a></li>
     <li><a href="#clientes">Clientes</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
     <li><a href="#contacto">Contacto</a></li>
   </ul>
-  <a href="#contacto" class="nav-cta">Consultoría Gratuita</a>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span class="nav-phone">+502 3082-4050</span>
+    <a href="#contacto" class="btn-nav">Consultoría Gratuita</a>
+  </div>
 </nav>
 
-<section class="hero">
-  <div class="glow1"></div><div class="glow2"></div>
-  <div class="eyebrow"><span class="pulse"></span>Guatemala · LATAM · Caribe · +21 Años de Experiencia</div>
-  <h1>Infraestructura que<br><span class="accent">nunca se detiene.</span></h1>
-  <p class="hero-sub">RVCorp Worldwide lleva estándares Fortune 500 a su empresa. Infraestructura crítica, ciberseguridad global y automatización inteligente para organizaciones que no pueden fallar.</p>
-  <div class="hero-actions">
-    <a href="#contacto" class="btn-p">Agendar Diagnóstico Gratuito <svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <a href="#servicios" class="btn-s">Ver Servicios</a>
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label">⚡ TECH NEWS</div>
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">APPLE</span><a href="https://www.apple.com/newsroom/" target="_blank">Apple Intelligence llega a más dispositivos con iOS 18 y macOS Sequoia</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">CISCO</span><a href="https://newsroom.cisco.com" target="_blank">Cisco lanza nuevas soluciones de seguridad con IA para redes empresariales</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">GOOGLE AI</span><a href="https://blog.google/technology/ai/" target="_blank">Google Gemini 2.0 impulsa automatización en Google Workspace empresarial</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">FORTINET</span><a href="https://www.fortinet.com/blog" target="_blank">FortiGuard Labs reporta aumento de amenazas en infraestructuras críticas LATAM</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">MICROSOFT</span><a href="https://www.microsoft.com/en-us/microsoft-365/blog/" target="_blank">Copilot en Microsoft 365 reduce tareas manuales hasta un 40% en empresas medianas</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">ISO</span><a href="https://www.iso.org/news.html" target="_blank">ISO 27001:2022 — nuevos controles de ciberseguridad obligan a revisión de auditorías</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">AWS</span><a href="https://aws.amazon.com/blogs/aws/" target="_blank">Amazon Web Services expande regiones en LATAM con nuevos edge locations</a></div>
+    <!-- duplicados para loop continuo -->
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">APPLE</span><a href="https://www.apple.com/newsroom/" target="_blank">Apple Intelligence llega a más dispositivos con iOS 18 y macOS Sequoia</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">CISCO</span><a href="https://newsroom.cisco.com" target="_blank">Cisco lanza nuevas soluciones de seguridad con IA para redes empresariales</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">GOOGLE AI</span><a href="https://blog.google/technology/ai/" target="_blank">Google Gemini 2.0 impulsa automatización en Google Workspace empresarial</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">FORTINET</span><a href="https://www.fortinet.com/blog" target="_blank">FortiGuard Labs reporta aumento de amenazas en infraestructuras críticas LATAM</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">MICROSOFT</span><a href="https://www.microsoft.com/en-us/microsoft-365/blog/" target="_blank">Copilot en Microsoft 365 reduce tareas manuales hasta un 40% en empresas medianas</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">ISO</span><a href="https://www.iso.org/news.html" target="_blank">ISO 27001:2022 — nuevos controles de ciberseguridad obligan a revisión de auditorías</a></div>
+    <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-source">AWS</span><a href="https://aws.amazon.com/blogs/aws/" target="_blank">Amazon Web Services expande regiones en LATAM con nuevos edge locations</a></div>
   </div>
-  <div class="hero-strip">
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-dots"></div><div class="hero-blob"></div><div class="hero-blob2"></div>
+  <div class="hero-inner">
+    <div class="hero-tag"><span class="hero-tag-dot"></span>Guatemala · LATAM · Caribe · +21 años operando</div>
+    <h1>Infraestructura que<br><em>nunca se detiene.</em></h1>
+    <p class="hero-sub">RVCorp Worldwide ofrece soluciones integrales de infraestructura, ciberseguridad y automatización para empresas que operan en entornos críticos y no pueden permitirse fallas.</p>
+    <div class="hero-btns">
+      <a href="#contacto" class="btn-p">Hablar con un especialista <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="#servicios" class="btn-s">Ver soluciones</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hstat-n">21<span>+</span></div><div class="hstat-l">Años de experiencia</div></div>
+      <div><div class="hstat-n">99<span>.9%</span></div><div class="hstat-l">Uptime garantizado</div></div>
+      <div><div class="hstat-n">730<span>+</span></div><div class="hstat-l">Usuarios soportados</div></div>
+      <div><div class="hstat-n">30<span>%</span></div><div class="hstat-l">Reducción de downtime</div></div>
+    </div>
+  </div>
+  <div class="hero-images">
     <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=60" alt="Data center">
     <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800&auto=format&fit=crop&q=60" alt="Network">
-    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=60" alt="BI Dashboard">
+    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=60" alt="Dashboard">
   </div>
 </section>
 
-<div class="stats">
-  <div class="stat"><div class="stat-n">21<span>+</span></div><div class="stat-l">Años de experiencia</div></div>
-  <div class="stat"><div class="stat-n">99<span>.9%</span></div><div class="stat-l">Disponibilidad garantizada</div></div>
-  <div class="stat"><div class="stat-n">30<span>%</span></div><div class="stat-l">Reducción de downtime</div></div>
-  <div class="stat"><div class="stat-n">730<span>+</span></div><div class="stat-l">Usuarios soportados</div></div>
-</div>
-
+<!-- SERVICES -->
 <section id="servicios" class="svc-bg">
   <span class="lbl">Servicios</span>
-  <h2 class="sec-h">Soluciones integrales para su infraestructura</h2>
-  <p class="sec-d">Desde redes y ciberseguridad hasta automatización con IA — todo bajo un mismo techo con estándares Fortune 500.</p>
+  <h2 class="sec-h">Soluciones completas para su operación tecnológica</h2>
+  <p class="sec-d">Desde la infraestructura de red hasta la automatización inteligente — cubrimos todo el ciclo de vida tecnológico de su empresa.</p>
   <div class="svc-grid">
 
     <div class="svc-card">
       <div class="ic ic-blue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#4a8fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="2" width="20" height="5" rx="1.5"/><rect x="2" y="9.5" width="20" height="5" rx="1.5"/><rect x="2" y="17" width="20" height="5" rx="1.5"/>
-          <circle cx="18" cy="4.5" r="1" fill="#4a8fff" stroke="none"/><circle cx="18" cy="12" r="1" fill="#4a8fff" stroke="none"/><circle cx="18" cy="19.5" r="1" fill="#4a8fff" stroke="none"/>
-          <circle cx="21" cy="4.5" r=".6" fill="rgba(74,143,255,.5)" stroke="none"/><circle cx="21" cy="12" r=".6" fill="rgba(74,143,255,.5)" stroke="none"/>
+          <circle cx="18.5" cy="4.5" r="1" fill="#0047cc" stroke="none"/><circle cx="18.5" cy="12" r="1" fill="#0047cc" stroke="none"/><circle cx="18.5" cy="19.5" r="1" fill="#0047cc" stroke="none"/>
+          <circle cx="21" cy="4.5" r=".6" fill="rgba(0,71,204,.4)" stroke="none"/>
         </svg>
       </div>
       <h3>Infraestructura & Redes</h3>
       <p>Diseño, implementación y administración de redes corporativas y servidores en entornos híbridos con disponibilidad del 99.9%.</p>
       <div class="tags"><span class="tag">Cisco</span><span class="tag">Fortinet</span><span class="tag">Linux</span><span class="tag">AWS</span><span class="tag">Proxmox</span><span class="tag">Docker</span></div>
-      <a href="#contacto" class="svc-link">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#3d74ff" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      <a href="#contacto" class="svc-cta">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
     </div>
 
     <div class="svc-card">
-      <div class="ic ic-gold">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#c8982a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="ic ic-teal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00b89c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2L3 6.5v5.5c0 5.25 3.8 10.15 9 11.5 5.2-1.35 9-6.25 9-11.5V6.5L12 2z"/>
           <path d="M8.5 12l2.5 2.5 4.5-4.5"/>
         </svg>
@@ -244,24 +346,24 @@ footer{padding:38px 60px;border-top:1px solid var(--border);display:flex;align-i
       <h3>Ciberseguridad & Cumplimiento</h3>
       <p>Auditorías ISO 27001, SOX, hardening de perímetro, DLP y MDM. Protección con estándares Fortune 500.</p>
       <div class="tags"><span class="tag">ISO 27001</span><span class="tag">SOX</span><span class="tag">DLP</span><span class="tag">MDM</span><span class="tag">Kali Linux</span></div>
-      <a href="#contacto" class="svc-link">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#3d74ff" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      <a href="#contacto" class="svc-cta">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
     </div>
 
     <div class="svc-card">
-      <div class="ic ic-teal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="ic ic-gold">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#d4891a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
       </div>
       <h3>Automatización & Business Intelligence</h3>
       <p>ETL pipelines, scripts Python, dashboards Power BI. Decisiones en tiempo real basadas en sus propios datos.</p>
       <div class="tags"><span class="tag">Python</span><span class="tag">Power BI</span><span class="tag">SQL</span><span class="tag">Zapier</span><span class="tag">Make</span></div>
-      <a href="#contacto" class="svc-link">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#3d74ff" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      <a href="#contacto" class="svc-cta">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
     </div>
 
     <div class="svc-card">
       <div class="ic ic-purple">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="3" width="9" height="9" rx="1.5"/><rect x="13" y="3" width="9" height="9" rx="1.5"/>
           <rect x="2" y="14" width="9" height="7" rx="1.5"/><rect x="13" y="14" width="9" height="7" rx="1.5"/>
         </svg>
@@ -269,28 +371,28 @@ footer{padding:38px 60px;border-top:1px solid var(--border);display:flex;align-i
       <h3>Gestión de Plataformas & Licencias</h3>
       <p>Administración avanzada de Google Workspace, Microsoft 365 y la suite colaborativa empresarial completa.</p>
       <div class="tags"><span class="tag">Google Workspace</span><span class="tag">M365</span><span class="tag">Jira</span><span class="tag">Airtable</span><span class="tag">Notion</span></div>
-      <a href="#contacto" class="svc-link">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#3d74ff" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      <a href="#contacto" class="svc-cta">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
     </div>
 
     <div class="svc-card">
       <div class="ic ic-orange">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="7" width="13" height="9" rx="1.5"/>
           <path d="M15 10h2a2.5 2.5 0 010 5h-2"/>
           <path d="M5 20h5M7 16v4"/>
           <circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/>
-          <path d="M19 7v10M19 7a2 2 0 100-4 2 2 0 000 4z" opacity=".3" fill="#f97316" stroke="none"/>
+          <path d="M19 7v10"/>
         </svg>
       </div>
       <h3>Hardware, IoT & Venta de Equipos</h3>
       <p>Venta de equipos Apple, Windows y networking Cisco. Implementación de sistemas IoT industriales por fases.</p>
       <div class="tags"><span class="tag">Apple</span><span class="tag">Cisco</span><span class="tag">IoT</span><span class="tag">SAP</span><span class="tag">Odoo</span></div>
-      <a href="#contacto" class="svc-link">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#3d74ff" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      <a href="#contacto" class="svc-cta">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
     </div>
 
     <div class="svc-card">
       <div class="ic ic-green">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
           <path d="M8 10h8M8 14h5"/>
         </svg>
@@ -298,30 +400,32 @@ footer{padding:38px 60px;border-top:1px solid var(--border);display:flex;align-i
       <h3>Soporte & Helpdesk Empresarial</h3>
       <p>Soporte OnSite y remoto, mantenimiento preventivo y correctivo, contratos anuales con SLA garantizado.</p>
       <div class="tags"><span class="tag">Helpdesk</span><span class="tag">Mantenimiento</span><span class="tag">SLA</span><span class="tag">Onsite</span><span class="tag">Remoto</span></div>
-      <a href="#contacto" class="svc-link">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#3d74ff" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+      <a href="#contacto" class="svc-cta">¿Lo necesita en su empresa? Contáctenos <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
     </div>
 
   </div>
 </section>
 
+<!-- VISUAL SPLIT -->
 <div class="vis-wrap">
   <div class="vis-img">
-    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&auto=format&fit=crop&q=60" alt="Corporate technology">
+    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&auto=format&fit=crop&q=60" alt="Corporate technology operations">
     <div class="vis-overlay"></div>
   </div>
   <div class="vis-content">
     <span class="lbl">Resultados Comprobados</span>
     <h2>21 años blindando infraestructuras que no pueden fallar</h2>
-    <p>He gestionado redes y servidores para Coca-Cola, WPP y Ogilvy con más de 730 usuarios simultáneos. Cuando la continuidad del negocio no es negociable, ahí es donde entro.</p>
-    <p>Aplico los mismos estándares ISO 27001 y SOX que usan los corporativos Fortune 500, adaptados a la realidad de su empresa.</p>
+    <p>He gestionado redes y servidores para Coca-Cola, WPP y Ogilvy con más de 730 usuarios simultáneos, con políticas ISO 27001 auditadas desde Londres, Nueva York y Hong Kong.</p>
+    <p>Aplico los mismos estándares Fortune 500 adaptados a la realidad y presupuesto de su empresa.</p>
     <div class="metrics">
-      <div><div class="met-n">95%</div><div class="met-l">mejora en estabilidad de red</div></div>
-      <div><div class="met-n">30%</div><div class="met-l">reducción de downtime</div></div>
-      <div><div class="met-n">&lt;4h</div><div class="met-l">RTO en recuperación crítica</div></div>
+      <div class="met"><div class="met-n">95%</div><div class="met-l">mejora en estabilidad de red</div></div>
+      <div class="met"><div class="met-n">30%</div><div class="met-l">reducción de downtime</div></div>
+      <div class="met"><div class="met-n">&lt;4h</div><div class="met-l">RTO en recuperación crítica</div></div>
     </div>
   </div>
 </div>
 
+<!-- GALLERY STRIP -->
 <div class="gallery">
   <div class="g-item"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60" alt="Analytics"><span class="g-lbl">Analytics</span></div>
   <div class="g-item"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60" alt="Security"><span class="g-lbl">Security</span></div>
@@ -330,87 +434,145 @@ footer{padding:38px 60px;border-top:1px solid var(--border);display:flex;align-i
   <div class="g-item"><img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=500&auto=format&fit=crop&q=60" alt="Cloud"><span class="g-lbl">Cloud</span></div>
 </div>
 
-<section id="clientes" class="cli-bg">
-  <span class="lbl">Trayectoria</span>
-  <h2 class="sec-h">Confiados por las mejores marcas</h2>
-  <p class="sec-d">Más de dos décadas gestionando tecnología para organizaciones que no pueden detenerse.</p>
-  <div class="cli-grid">
-    <div class="cli-cat"><div class="cat-lbl">Multinacionales</div><div class="cli-list"><span class="cpill">Procter & Gamble</span><span class="cpill">Coca-Cola</span><span class="cpill">Pepsi-Cola</span></div></div>
-    <div class="cli-cat"><div class="cat-lbl">Agencias de Publicidad</div><div class="cli-list"><span class="cpill">Ogilvy Guatemala</span><span class="cpill">WPP</span><span class="cpill">DDB</span><span class="cpill">BBDO</span><span class="cpill">Heart & Science</span><span class="cpill">Tribal Worldwide</span></div></div>
-    <div class="cli-cat"><div class="cat-lbl">Sector Financiero · Guatemala</div><div class="cli-list"><span class="cpill">Banco BI</span><span class="cpill">Banco City</span><span class="cpill">Banco Promerica</span><span class="cpill">Banco Cuscatlán</span></div></div>
-    <div class="cli-cat"><div class="cat-lbl">Educación & Industria</div><div class="cli-list"><span class="cpill">Malher</span><span class="cpill">Universidad UNIS</span><span class="cpill">Universidad Marroquín</span></div></div>
+<!-- SOLUTIONS -->
+<section id="soluciones" class="sol-bg">
+  <span class="lbl">Por qué RVCorp</span>
+  <h2 class="sec-h">Resultados que se miden en continuidad operativa</h2>
+  <p class="sec-d">No vendemos tecnología — garantizamos que su negocio no se detenga.</p>
+  <div class="sol-grid">
+    <div class="sol-card"><div class="sol-num">01</div><h3>Infraestructura Crítica Siempre Activa</h3><p>Reducción del downtime hasta 30% mediante planes de recuperación ante desastres, virtualización inteligente y monitoreo proactivo con Python.</p><a href="#contacto" class="sol-link">Evaluar mi infraestructura <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a></div>
+    <div class="sol-card"><div class="sol-num">02</div><h3>Seguridad con Estándares Multinacionales</h3><p>Experiencia directa aplicando políticas ISO 27001, SOX y cumplimiento WPP en entornos de agencias globales como Ogilvy, DDB y Coca-Cola.</p><a href="#contacto" class="sol-link">Auditar mi seguridad <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a></div>
+    <div class="sol-card"><div class="sol-num">03</div><h3>Automatización que Elimina el Error Humano</h3><p>Scripts Python, ETL pipelines y dashboards Power BI conectados a sus bases de datos para que la gerencia tome decisiones en tiempo real.</p><a href="#contacto" class="sol-link">Automatizar mis procesos <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a></div>
+    <div class="sol-card"><div class="sol-num">04</div><h3>BackOffice y Gestión Operativa Integrada</h3><p>Organización de procesos administrativos, herramientas colaborativas y gestión documental para empresas en crecimiento.</p><a href="#contacto" class="sol-link">Ordenar mi operación <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="11" height="11"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a></div>
   </div>
 </section>
 
+<!-- CLIENTS -->
+<section id="clientes" class="cli-bg">
+  <span class="lbl">Trayectoria</span>
+  <h2 class="sec-h">Confiados por las mejores marcas de la región</h2>
+  <p class="sec-d">Más de dos décadas gestionando tecnología para organizaciones que no pueden fallar.</p>
+  <div class="cli-grid">
+    <div class="cli-cat"><div class="cat-lbl">Multinacionales</div><div class="cli-list"><span class="cpill">Procter & Gamble</span><span class="cpill">Coca-Cola</span><span class="cpill">Pepsi-Cola</span></div></div>
+    <div class="cli-cat"><div class="cat-lbl">Agencias Globales</div><div class="cli-list"><span class="cpill">Ogilvy Guatemala</span><span class="cpill">WPP</span><span class="cpill">DDB</span><span class="cpill">BBDO</span><span class="cpill">Heart & Science</span><span class="cpill">Tribal Worldwide</span></div></div>
+    <div class="cli-cat"><div class="cat-lbl">Sector Financiero · Guatemala</div><div class="cli-list"><span class="cpill">Banco BI</span><span class="cpill">Banco City</span><span class="cpill">Banco Promerica</span><span class="cpill">Banco Cuscatlán</span></div></div>
+    <div class="cli-cat"><div class="cat-lbl">Educación & Industria</div><div class="cli-list"><span class="cpill">Malher</span><span class="cpill">Universidad UNIS</span><span class="cpill">Universidad Marroquín</span></div></div>
+  </div>
+  <span class="lbl" style="margin-top:36px;display:block">Tecnologías & Plataformas</span>
+  <div class="logos-row">
+    <span class="logo-box">Linux</span><span class="logo-box">Windows Server</span><span class="logo-box">macOS</span><span class="logo-box">Cisco</span><span class="logo-box">Fortinet</span><span class="logo-box">AWS</span><span class="logo-box">Google Workspace</span><span class="logo-box">Microsoft 365</span><span class="logo-box">Atlassian</span><span class="logo-box">Docker</span><span class="logo-box">Proxmox</span><span class="logo-box">Power BI</span><span class="logo-box">ISO 27001</span><span class="logo-box">SOX</span><span class="logo-box">Adobe Suite</span><span class="logo-box">Cloudflare</span><span class="logo-box">SAP</span><span class="logo-box">Odoo</span>
+  </div>
+</section>
+
+<!-- TECH NEWS -->
+<section id="noticias" class="news-bg">
+  <span class="lbl">Noticias Tech <span class="live-badge"><span class="live-dot"></span>LIVE</span></span>
+  <h2 class="sec-h">Lo que está pasando en tecnología empresarial</h2>
+  <p class="sec-d">Apple, Cisco, Google, Microsoft, ciberseguridad y más — fuentes confiables para que su empresa esté siempre informada.</p>
+  <div class="news-grid" id="newsGrid">
+    <div class="news-card">
+      <div class="news-source">🍎 Apple</div>
+      <h4>Apple Intelligence transforma la productividad empresarial</h4>
+      <p>Las nuevas funciones de IA en macOS Sequoia e iOS 18 están redefiniendo cómo los equipos corporativos trabajan con herramientas Apple.</p>
+      <a href="https://www.apple.com/newsroom/" target="_blank" class="news-link">Leer en Apple Newsroom <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="10" height="10"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+    </div>
+    <div class="news-card">
+      <div class="news-source">🔵 Cisco</div>
+      <h4>Cisco Security Cloud: protección unificada con IA</h4>
+      <p>Cisco integra inteligencia artificial en su plataforma de seguridad para detectar amenazas en tiempo real en entornos híbridos y multi-cloud.</p>
+      <a href="https://newsroom.cisco.com" target="_blank" class="news-link">Leer en Cisco Newsroom <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="10" height="10"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+    </div>
+    <div class="news-card">
+      <div class="news-source">🤖 Google AI</div>
+      <h4>Gemini 2.0 revoluciona Google Workspace para empresas</h4>
+      <p>El nuevo modelo Gemini Ultra trae automatización avanzada a Gmail, Docs y Meet, transformando la colaboración empresarial en LATAM.</p>
+      <a href="https://blog.google/technology/ai/" target="_blank" class="news-link">Leer en Google Blog <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="10" height="10"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+    </div>
+    <div class="news-card">
+      <div class="news-source">🛡️ Ciberseguridad</div>
+      <h4>ISO 27001:2022 — nuevos controles obligan a revisión urgente</h4>
+      <p>Las organizaciones tienen hasta 2025 para migrar a la versión actualizada. Los nuevos 11 controles impactan directamente en auditorías y cumplimiento.</p>
+      <a href="https://www.darkreading.com" target="_blank" class="news-link">Leer en Dark Reading <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="10" height="10"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+    </div>
+    <div class="news-card">
+      <div class="news-source">☁️ Microsoft</div>
+      <h4>Copilot en Microsoft 365 reduce trabajo manual hasta 40%</h4>
+      <p>Empresas medianas reportan ahorros significativos en tiempo al implementar Copilot para automatizar reportes y correos ejecutivos.</p>
+      <a href="https://www.microsoft.com/en-us/microsoft-365/blog/" target="_blank" class="news-link">Leer en Microsoft Blog <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="10" height="10"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+    </div>
+    <div class="news-card">
+      <div class="news-source">🌐 Infraestructura</div>
+      <h4>AWS expande presencia en LATAM con nuevos edge locations</h4>
+      <p>Amazon Web Services anuncia nuevos puntos de presencia en Centroamérica, reduciendo latencia para empresas que operan en la región.</p>
+      <a href="https://aws.amazon.com/blogs/aws/" target="_blank" class="news-link">Leer en AWS Blog <svg viewBox="0 0 12 12" fill="none" stroke="#0047cc" stroke-width="1.5" stroke-linecap="round" width="10" height="10"><path d="M2 6h8M6 2l4 4-4 4"/></svg></a>
+    </div>
+  </div>
+  <div class="news-cta-bar">
+    <p>¿Leyó algo que le preocupa o que desea implementar en su empresa?</p>
+    <a href="#contacto">Contáctenos — le ayudamos a implementarlo en su empresa →</a>
+  </div>
+</section>
+
+<!-- PROFILE -->
 <section id="nosotros" class="pro-bg">
-  <span class="lbl">Fundador</span>
+  <span class="lbl">Socios con mucha experiencia</span>
   <div class="pro-grid">
     <div>
       <div class="pro-card">
-        <div class="pro-photo"><div class="pro-init">ER</div></div>
+        <div class="pro-photo">
+          <!-- Para foto real: <img src="foto-edwin.jpg" alt="Edwin Ramos"> -->
+          <div class="pro-init">ER</div>
+        </div>
         <div class="pro-info">
           <h3>Edwin Ramos</h3>
-          <p class="pro-role">Fundador · Arquitecto de Infraestructura</p>
+          <p class="pro-role">Experto · Arquitecto de Infraestructura</p>
           <div class="ci"><span class="cdot"></span><a href="mailto:ventas@rvccorporation.com">ventas@rvccorporation.com</a></div>
           <div class="ci"><span class="cdot"></span><a href="tel:+50230824050">+502 3082-4050</a></div>
           <div class="ci"><span class="cdot"></span><span>Mixco, Guatemala City</span></div>
           <div class="social">
             <a href="https://linkedin.com/in/edwin-ramos-a9105620" target="_blank" class="sb" title="LinkedIn">
-              <svg viewBox="0 0 24 24" fill="var(--muted)"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              <svg class="sb-li" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
             </a>
             <a href="https://wa.me/50230824050" target="_blank" class="sb" title="WhatsApp">
-              <svg viewBox="0 0 24 24" fill="var(--muted)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <svg class="sb-wa" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             </a>
             <a href="mailto:ventas@rvccorporation.com" class="sb" title="Email">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <svg class="sb-em" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </a>
-            <a href="https://github.com/admin-ceo-cloudRVCorp" target="_blank" class="sb" title="GitHub">
-              <svg viewBox="0 0 24 24" fill="var(--muted)"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
             </a>
           </div>
         </div>
       </div>
       <div class="certs">
-        <span class="cert">Google IT Support</span><span class="cert">Google Networking</span><span class="cert">Apple iLife & iWork</span><span class="cert">Apple Service Fund.</span><span class="cert">McAfee ePO Admin</span><span class="cert">NOD32 Console</span><span class="cert">Cruz Roja Brigadista</span>
+        <span class="cert">Google IT Support</span><span class="cert">Cisco Cert Networking</span><span class="cert">Linux Certification</span><span class="cert">Apple Service Fund.</span><span class="cert">McAfee ePO Admin</span><span class="cert">NOD32 Console</span><span class="cert">Odoo Specialist</span>
       </div>
     </div>
     <div class="pro-content">
       <h2>21 años en la primera línea de la infraestructura global</h2>
       <p>Especialista en infraestructura tecnológica y cumplimiento normativo con trayectoria comprobada en organizaciones Fortune 500. Cada decisión técnica tiene impacto directo en la continuidad de su negocio.</p>
       <p>He gestionado entornos críticos para Coca-Cola, WPP y Ogilvy supervisando más de 730 usuarios simultáneamente, con políticas ISO 27001 auditadas desde Londres, Nueva York y Hong Kong.</p>
-      <p style="color:var(--white);font-weight:500;">Español nativo · Inglés avanzado · Disponible en LATAM, Caribe y remoto global.</p>
+      <p style="color:var(--dark);font-weight:500">Español nativo · Inglés avanzado · Disponible en LATAM, Caribe y remoto global.</p>
       <div class="sk-grid">
         <div class="sk"><h4>Infraestructura</h4><p>Linux, Windows Server, macOS, AWS, Proxmox, Docker, Cisco, Fortinet</p></div>
         <div class="sk"><h4>Ciberseguridad</h4><p>ISO 27001, SOX, DLP, MDM, Keeper, Barracuda, Kali Linux</p></div>
         <div class="sk"><h4>Automatización & Datos</h4><p>Python, ETL, PostgreSQL, MySQL, Power BI, Zapier, Make</p></div>
-        <div class="sk"><h4>Plataformas Empresariales</h4><p>Google Workspace, Microsoft 365, Atlassian Suite, Adobe, Cloudflare</p></div>
+        <div class="sk"><h4>Plataformas Empresariales</h4><p>Google Workspace, M365, Atlassian, Adobe, Figma, Cloudflare</p></div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- CONTACT -->
 <section id="contacto" class="con-bg">
   <span class="lbl">Contacto</span>
   <div class="con-grid">
     <div class="con-info">
       <h2>Construyamos su infraestructura del futuro</h2>
       <p>Agende una sesión de diagnóstico gratuita de 30 minutos. Sin compromiso — con resultados reales.</p>
-      <div class="cdet">
-        <div class="cico"><svg viewBox="0 0 20 20" fill="none" stroke="#4a8fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h16v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4z"/><path d="M2 4l8 8 8-8"/></svg></div>
-        <div class="ctxt"><h4>Email comercial</h4><a href="mailto:ventas@rvccorporation.com">ventas@rvccorporation.com</a></div>
-      </div>
-      <div class="cdet">
-        <div class="cico"><svg viewBox="0 0 20 20" fill="none" stroke="#4a8fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3a1 1 0 011-1h3.5a1 1 0 011 1v4a1 1 0 01-1 1H5a10 10 0 008 8v-1.5a1 1 0 011-1h4a1 1 0 011 1V17a1 1 0 01-1 1A16 16 0 012 3z"/></svg></div>
-        <div class="ctxt"><h4>WhatsApp & Móvil</h4><a href="https://wa.me/50230824050">+502 3082-4050</a></div>
-      </div>
-      <div class="cdet">
-        <div class="cico"><svg viewBox="0 0 20 20" fill="none" stroke="#4a8fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="5"/><path d="M3.5 17.5a8 8 0 0113 0"/></svg></div>
-        <div class="ctxt"><h4>LinkedIn</h4><a href="https://linkedin.com/in/edwin-ramos-a9105620" target="_blank">linkedin.com/in/edwin-ramos-a9105620</a></div>
-      </div>
-      <div class="cdet">
-        <div class="cico"><svg viewBox="0 0 20 20" fill="none" stroke="#4a8fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2a6 6 0 00-6 6c0 4 6 10 6 10s6-6 6-10a6 6 0 00-6-6z"/><circle cx="10" cy="8" r="2"/></svg></div>
-        <div class="ctxt"><h4>Ubicación</h4><p>Mixco, Guatemala City · Servicio en LATAM & Caribe</p></div>
-      </div>
+      <div class="cdet"><div class="cico"><svg viewBox="0 0 20 20"><path d="M2 4h16v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4z"/><path d="M2 4l8 8 8-8"/></svg></div><div class="ctxt"><h4>Email comercial</h4><a href="mailto:ventas@rvccorporation.com">ventas@rvccorporation.com</a></div></div>
+      <div class="cdet"><div class="cico"><svg viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h3.5a1 1 0 011 1v4a1 1 0 01-1 1H5a10 10 0 008 8v-1.5a1 1 0 011-1h4a1 1 0 011 1V17a1 1 0 01-1 1A16 16 0 012 3z"/></svg></div><div class="ctxt"><h4>WhatsApp & Móvil</h4><a href="https://wa.me/50230824050">+502 3082-4050</a></div></div>
+      <div class="cdet"><div class="cico"><svg viewBox="0 0 20 20"><circle cx="10" cy="8" r="5"/><path d="M3.5 17.5a8 8 0 0113 0"/></svg></div><div class="ctxt"><h4>LinkedIn</h4><a href="https://linkedin.com/in/edwin-ramos-a9105620" target="_blank">linkedin.com/in/edwin-ramos-a9105620</a></div></div>
+      <div class="cdet"><div class="cico"><svg viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6c0 4 6 10 6 10s6-6 6-10a6 6 0 00-6-6z"/><circle cx="10" cy="8" r="2"/></svg></div><div class="ctxt"><h4>Ubicación</h4><p>Mixco, Guatemala City · Servicio en LATAM & Caribe</p></div></div>
     </div>
     <div class="form-wrap">
       <form action="https://formsubmit.co/ventas@rvccorporation.com" method="POST">
@@ -447,16 +609,29 @@ footer{padding:38px 60px;border-top:1px solid var(--border);display:flex;align-i
 </section>
 
 <footer>
-  <div class="flogo">RVCorp<span class="logo-dot"></span></div>
+  <div class="flogo">RVCorp<span>Worldwide</span></div>
   <div class="flinks">
     <a href="#servicios">Servicios</a>
+    <a href="#noticias">Noticias Tech</a>
     <a href="#clientes">Clientes</a>
-    <a href="#nosotros">Equipo</a>
+    <a href="#nosotros">Nosotros</a>
+    <a href="#contacto">Contacto</a>
     <a href="https://linkedin.com/in/edwin-ramos-a9105620" target="_blank">LinkedIn</a>
     <a href="https://wa.me/50230824050" target="_blank">WhatsApp</a>
   </div>
   <div class="fcopy">© 2025 RVCorp Worldwide · Edwin Ramos · rvccorporation.com</div>
 </footer>
 
+<script>
+// Auto-update news dates in ticker every page load
+(function(){
+  const now = new Date();
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const dateStr = now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+  document.querySelectorAll('.ticker-source').forEach(function(el){
+    el.title = 'Actualizado: '+dateStr;
+  });
+})();
+</script>
 </body>
 </html>
