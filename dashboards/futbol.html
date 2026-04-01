@@ -1,1 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Intelligence · RVCorp Data Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ── VARIABLES ─────────────────────────────────────── */
+:root{
+  --p:#faf7f0;--p2:#f2ede3;--ink:#1a1410;
+  --rule:#c8b89a;--rule2:#e0d4bc;--rule3:#ede5d4;
+  --acc:#7c3d1e;--acc2:#a0521e;--acc3:#c06830;
+  --grn:#2d5a27;--grn2:#3a7232;
+  --red:#8b1a1a;--red2:#b02020;
+  --blu:#1a3a5c;--blu2:#245080;
+  --gld:#c8a030;--gld2:#e0b840;
+  --mut:#8a7460;--hi:#fffdf8;
+  --sb:#13100c;--sb2:#1c1612;--sbrule:#2a221a;--sbt:#a89878;--sbm:#5a4a3a;
+  --cyan:#1a7070;--cyan2:#228888;
+  --f1:'Fraunces',serif;--f2:'IBM Plex Sans',sans-serif;--f3:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--f2);background:var(--p);color:var(--ink);font-size:13px;overflow-x:hidden}
 
+/* ── SIDEBAR ─────────────────────────────────────── */
+.sb{position:fixed;left:0;top:0;width:220px;height:100vh;overflow-y:auto;
+  background:var(--sb);border-right:1px solid var(--sbrule);z-index:300;display:flex;flex-direction:column}
+.sb::-webkit-scrollbar{width:2px}.sb::-webkit-scrollbar-thumb{background:var(--sbrule)}
+.sb-brand{padding:18px 16px 12px;border-bottom:1px solid var(--sbrule)}
+.sb-logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:6px}
+.sb-logo-sq{width:26px;height:26px;background:var(--acc);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--f3);font-size:9px;color:#fff;font-weight:500}
+.sb-logo-txt{font-family:var(--f1);font-size:12px;font-weight:600;color:#d4b896}
+.sb-name{font-family:var(--f1);font-size:13px;font-weight:600;color:#d4b896;line-height:1.2}
+.sb-sub{font-family:var(--f3);font-size:7px;color:var(--sbm);letter-spacing:1.5px;margin-top:2px}
+.sb-sec{font-family:var(--f3);font-size:7px;letter-spacing:2px;color:var(--sbm);text-transform:uppercase;padding:10px 16px 4px}
+.lnk{display:flex;align-items:center;gap:8px;padding:6px 16px;text-decoration:none;
+  font-size:10.5px;color:var(--sbt);font-family:var(--f3);border-left:2px solid transparent;
+  transition:all .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.lnk:hover{color:#e8d4b4;background:rgba(200,184,154,.06)}
+.lnk.on{color:#d4b896;border-left-color:var(--rule);background:rgba(200,184,154,.08)}
+.lnk .i{opacity:.5;font-size:9px;width:14px;flex-shrink:0}
+.sb-div{height:1px;background:var(--sbrule);margin:5px 16px}
+/* League filters in sidebar */
+.league-filter{display:flex;align-items:center;gap:8px;padding:5px 16px;cursor:pointer;transition:all .12s}
+.league-filter:hover{background:rgba(200,184,154,.04)}
+.league-filter.active .lf-dot{opacity:1}
+.league-filter.active{color:#e8d4b4}
+.lf-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;opacity:.35;transition:opacity .12s}
+.lf-name{font-family:var(--f3);font-size:9.5px;color:var(--sbt);letter-spacing:.3px}
+.lf-name.active{color:#e8d4b4}
+.sb-bottom{margin-top:auto;padding:12px 16px;border-top:1px solid var(--sbrule)}
+.sb-info{font-family:var(--f3);font-size:7.5px;color:var(--sbm);line-height:1.9}
+.sb-info strong{color:var(--sbt)}
+.back-link{display:flex;align-items:center;gap:6px;font-family:var(--f3);font-size:8.5px;color:var(--sbm);text-decoration:none;transition:color .12s;letter-spacing:.5px}
+.back-link:hover{color:var(--sbt)}
+
+/* ── MAIN ─────────────────────────────────────── */
+.main{margin-left:220px;min-height:100vh}
+.pag{display:none;animation:fi .18s ease}
+.pag.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ── PAGE HEADER ─────────────────────────────────── */
+.ph{background:var(--ink);padding:26px 40px 22px;position:relative;overflow:hidden}
+.ph::before{content:attr(data-g);position:absolute;right:40px;top:50%;transform:translateY(-50%);
+  font-family:var(--f1);font-size:60px;font-weight:300;color:rgba(200,184,154,.04);letter-spacing:6px;pointer-events:none}
+.ph-sup{font-family:var(--f3);font-size:7px;letter-spacing:3px;color:rgba(200,184,154,.4);text-transform:uppercase;margin-bottom:6px}
+.ph-tit{font-family:var(--f1);font-size:20px;font-weight:300;color:#f0e4cc;line-height:1.2}
+.ph-met{font-family:var(--f3);font-size:8px;color:rgba(200,184,154,.3);margin-top:4px}
+.ph-act{position:absolute;right:40px;bottom:22px;display:flex;gap:8px}
+.ph-btn{font-family:var(--f3);font-size:8px;letter-spacing:1px;padding:5px 12px;border:1px solid rgba(200,184,154,.2);color:rgba(200,184,154,.5);background:none;cursor:pointer;transition:all .12s;text-transform:uppercase}
+.ph-btn:hover{border-color:rgba(200,184,154,.5);color:rgba(200,184,154,.8)}
+.ph-btn.active{border-color:var(--rule);color:#d4b896;background:rgba(200,184,154,.06)}
+
+/* ── SECTIONS ─────────────────────────────────── */
+.sec{padding:26px 40px;border-bottom:1px solid var(--rule2)}
+.sec-tag{font-family:var(--f3);font-size:7px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-bottom:4px}
+.sec-tit{font-family:var(--f1);font-size:17px;font-weight:300;color:var(--acc);margin-bottom:2px}
+.sec-sub{font-family:var(--f3);font-size:8px;color:var(--mut);padding-bottom:14px;border-bottom:1px solid var(--rule2);margin-bottom:18px}
+
+/* ── KPI CARDS ─────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px}
+.kpi{background:var(--hi);border:1px solid var(--rule2);border-top:3px solid var(--acc);padding:12px 14px}
+.kpi.g{border-top-color:var(--grn)}.kpi.b{border-top-color:var(--blu)}.kpi.gold{border-top-color:var(--gld)}.kpi.c{border-top-color:var(--cyan)}
+.kpi-l{font-family:var(--f3);font-size:7px;letter-spacing:1.5px;color:var(--mut);text-transform:uppercase;margin-bottom:4px}
+.kpi-v{font-family:var(--f1);font-size:22px;font-weight:600;color:var(--acc);line-height:1}
+.kpi-v.g{color:var(--grn)}.kpi-v.b{color:var(--blu)}.kpi-v.gold{color:var(--gld)}.kpi-v.c{color:var(--cyan)}
+.kpi-s{font-family:var(--f3);font-size:7.5px;color:var(--mut);margin-top:3px}
+.kpi-delta{font-family:var(--f3);font-size:8px;margin-top:3px}
+.kpi-delta.up{color:var(--grn)}.kpi-delta.dn{color:var(--red)}
+
+/* ── TABLES ─────────────────────────────────────── */
+.ct{width:100%;border-collapse:collapse;font-size:12px}
+.ct th{font-family:var(--f3);font-size:7px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mut);padding:7px 10px;text-align:left;border-bottom:1px solid var(--rule);background:var(--hi);white-space:nowrap}
+.ct th.r{text-align:right}
+.ct td{padding:6px 10px;border-bottom:1px solid var(--rule2);vertical-align:middle}
+.ct tr:hover td{background:rgba(200,184,154,.07)}
+.ct .num{text-align:right;font-family:var(--f3)}
+.ct .mono{font-family:var(--f3);font-size:11px}
+.ct .tot td{border-top:2px solid var(--rule)!important;background:var(--hi)!important;font-family:var(--f3);font-weight:600}
+.pos-num{font-family:var(--f3);font-size:11px;font-weight:500;color:var(--mut);width:20px;display:inline-block;text-align:right}
+.pos-1 .pos-num,.pos-2 .pos-num,.pos-3 .pos-num,.pos-4 .pos-num{color:var(--blu);font-weight:500}
+.pos-5 .pos-num,.pos-6 .pos-num{color:var(--cyan);font-weight:500}
+.pos-18 .pos-num,.pos-19 .pos-num,.pos-20 .pos-num{color:var(--red)}
+.team-name{font-weight:500;font-size:12px}
+.form-pills{display:flex;gap:3px}
+.fp{width:16px;height:16px;border-radius:2px;font-family:var(--f3);font-size:8px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.fp.W{background:rgba(45,90,39,.18);color:var(--grn)}.fp.D{background:rgba(200,184,154,.2);color:var(--mut)}.fp.L{background:rgba(139,26,26,.12);color:var(--red)}
+
+/* ── BADGES ─────────────────────────────────────── */
+.bdg{font-family:var(--f3);font-size:7px;padding:2px 6px;display:inline-block;letter-spacing:.5px}
+.bdg-ok{background:rgba(45,90,39,.12);color:var(--grn);border:1px solid rgba(45,90,39,.2)}
+.bdg-pen{background:rgba(124,61,30,.1);color:var(--acc);border:1px solid rgba(124,61,30,.2)}
+.bdg-live{background:rgba(176,32,32,.12);color:var(--red2);border:1px solid rgba(176,32,32,.2);animation:blink-bd 1.4s ease-in-out infinite}
+.bdg-blu{background:rgba(26,58,92,.1);color:var(--blu);border:1px solid rgba(26,58,92,.2)}
+.bdg-gld{background:rgba(200,160,48,.12);color:var(--gld);border:1px solid rgba(200,160,48,.2)}
+@keyframes blink-bd{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── CHART CONTAINERS ─────────────────────────── */
+.chart-wrap{position:relative;height:260px}
+.chart-wrap.tall{height:320px}
+.chart-wrap.med{height:220px}
+
+/* ── GRID LAYOUTS ─────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-65{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+.grid-56{display:grid;grid-template-columns:1fr 1.4fr;gap:16px}
+
+/* ── PANEL CARD ─────────────────────────────────── */
+.card{background:var(--hi);border:1px solid var(--rule2);padding:16px 18px}
+.card-title{font-family:var(--f1);font-size:13px;font-weight:400;color:var(--acc);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--rule2)}
+.card-sub{font-family:var(--f3);font-size:7.5px;color:var(--mut);letter-spacing:.5px;margin-top:-8px;margin-bottom:12px}
+
+/* ── MATCH CARDS ─────────────────────────────────── */
+.match-list{display:flex;flex-direction:column;gap:8px}
+.match-card{background:var(--hi);border:1px solid var(--rule2);padding:10px 14px;transition:border-color .12s}
+.match-card:hover{border-color:var(--rule)}
+.match-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.match-league{font-family:var(--f3);font-size:7.5px;color:var(--mut);letter-spacing:.5px;text-transform:uppercase}
+.match-date{font-family:var(--f3);font-size:7.5px;color:var(--mut)}
+.match-body{display:flex;align-items:center;justify-content:space-between}
+.match-team{font-size:12px;font-weight:500;font-family:var(--f2);flex:1}
+.match-team.away{text-align:right}
+.match-score{font-family:var(--f1);font-size:20px;font-weight:600;color:var(--ink);text-align:center;min-width:60px;line-height:1}
+.match-score.live{color:var(--red2)}
+.match-score-sub{font-family:var(--f3);font-size:7px;color:var(--mut);text-align:center;margin-top:2px}
+.match-odds{display:flex;gap:6px;margin-top:7px;padding-top:7px;border-top:1px solid var(--rule2)}
+.odd{flex:1;text-align:center;background:var(--p2);padding:4px 0}
+.odd-l{font-family:var(--f3);font-size:6.5px;color:var(--mut);letter-spacing:.5px;text-transform:uppercase}
+.odd-v{font-family:var(--f3);font-size:11px;color:var(--ink);font-weight:500;margin-top:1px}
+
+/* ── PLAYER STATS ─────────────────────────────────── */
+.player-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule3)}
+.player-row:last-child{border-bottom:none}
+.player-rank{font-family:var(--f3);font-size:10px;color:var(--mut);width:18px;text-align:right;flex-shrink:0}
+.player-info{flex:1}
+.player-name{font-size:12px;font-weight:500;color:var(--ink)}
+.player-team{font-family:var(--f3);font-size:8px;color:var(--mut);margin-top:1px}
+.player-stat{font-family:var(--f1);font-size:18px;font-weight:600;color:var(--acc);min-width:32px;text-align:right}
+.player-bar-wrap{width:80px;height:4px;background:var(--rule2);flex-shrink:0}
+.player-bar{height:100%;background:var(--acc);transition:width .6s ease}
+.player-bar.g{background:var(--grn)}.player-bar.b{background:var(--blu)}.player-bar.gold{background:var(--gld)}
+
+/* ── TABS ─────────────────────────────────────── */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--rule2);margin-bottom:14px}
+.tab{font-family:var(--f3);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 14px;cursor:pointer;color:var(--mut);border-bottom:2px solid transparent;transition:all .12s;border:none;background:none}
+.tab:hover{color:var(--ink)}.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+
+/* ── HEATMAP ─────────────────────────────────────── */
+.heatmap-wrap{display:flex;flex-direction:column;gap:3px}
+.hmap-row{display:flex;align-items:center;gap:4px}
+.hmap-label{font-family:var(--f3);font-size:8px;color:var(--mut);width:60px;text-align:right;flex-shrink:0}
+.hmap-cells{display:flex;gap:3px;flex:1}
+.hmap-cell{flex:1;height:22px;border-radius:2px;transition:opacity .2s;cursor:default;position:relative}
+.hmap-cell:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--p);font-family:var(--f3);font-size:7.5px;padding:3px 7px;white-space:nowrap;z-index:10;pointer-events:none}
+.hmap-col-labels{display:flex;gap:3px;margin-left:68px;margin-bottom:3px}
+.hmap-col-label{flex:1;font-family:var(--f3);font-size:7px;color:var(--mut);text-align:center}
+
+/* ── SCROLL ─────────────────────────────────────── */
+.scroll-x{overflow-x:auto}.scroll-x::-webkit-scrollbar{height:3px}.scroll-x::-webkit-scrollbar-thumb{background:var(--rule)}
+.scroll-y{max-height:360px;overflow-y:auto}.scroll-y::-webkit-scrollbar{width:3px}.scroll-y::-webkit-scrollbar-thumb{background:var(--rule)}
+
+/* ── LEGEND ─────────────────────────────────────── */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:var(--f3);font-size:8px;color:var(--mut)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── NOTA ─────────────────────────────────────── */
+.nota{background:rgba(200,184,154,.12);border-left:3px solid var(--rule);padding:8px 12px;font-family:var(--f3);font-size:8.5px;color:var(--mut);margin-bottom:14px;line-height:1.7}
+.nota strong{color:var(--ink)}
+
+/* ── LIVE INDICATOR ─────────────────────────────── */
+.live-wrap{display:flex;align-items:center;gap:5px}
+.live-dot{width:6px;height:6px;background:var(--red2);border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.live-lbl{font-family:var(--f3);font-size:8px;color:var(--red2);letter-spacing:1px;text-transform:uppercase}
+
+/* ── GAUGE ─────────────────────────────────────── */
+.gauge-wrap{position:relative;width:120px;height:70px;overflow:hidden;margin:0 auto}
+.gauge-val{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-family:var(--f1);font-size:20px;font-weight:600;color:var(--acc);text-align:center;white-space:nowrap}
+.gauge-lbl{font-family:var(--f3);font-size:7.5px;color:var(--mut);text-align:center;margin-top:4px}
+
+/* ── STAT COMPARE ─────────────────────────────── */
+.stat-compare{display:flex;flex-direction:column;gap:9px}
+.sc-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+.sc-label{font-family:var(--f3);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--mut);text-align:center;margin-bottom:5px}
+.sc-val-a{font-family:var(--f3);font-size:11px;font-weight:500;text-align:right;color:var(--acc)}
+.sc-val-b{font-family:var(--f3);font-size:11px;font-weight:500;text-align:left;color:var(--blu)}
+.sc-bar{display:flex;height:4px;background:var(--rule2);position:relative}
+.sc-bar-a{height:100%;background:var(--acc)}
+.sc-name{font-family:var(--f3);font-size:8px;color:var(--mut);text-align:center}
+
+/* ── TOOLTIP custom ─────────────────────────────── */
+.tip{position:relative;cursor:help}
+.tip::after{content:attr(data-tip);display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--p);font-family:var(--f3);font-size:8px;padding:4px 8px;white-space:nowrap;z-index:100;border:1px solid var(--sbrule)}
+.tip:hover::after{display:block}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<nav class="sb">
+  <div class="sb-brand">
+    <a href="../index.html" class="sb-logo">
+      <div class="sb-logo-sq">RV</div>
+      <span class="sb-logo-txt">RVCorp</span>
+    </a>
+    <div class="sb-name">Football Intelligence</div>
+    <div class="sb-sub">DATA DASHBOARD · 2024/25</div>
+  </div>
+
+  <div class="sb-sec">Vistas</div>
+  <button class="lnk on" onclick="showPage('overview')"><span class="i">◈</span>Overview Global</button>
+  <button class="lnk" onclick="showPage('standings')"><span class="i">≡</span>Tablas de Posición</button>
+  <button class="lnk" onclick="showPage('matches')"><span class="i">◷</span>Partidos & Fixtures</button>
+  <button class="lnk" onclick="showPage('players')"><span class="i">◎</span>Estadísticas Jugadores</button>
+  <button class="lnk" onclick="showPage('analytics')"><span class="i">⌇</span>Análisis & Tendencias</button>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Ligas</div>
+  <div class="league-filter active" onclick="filterLeague('all',this)">
+    <div class="lf-dot" style="background:#c8b89a"></div>
+    <span class="lf-name active">Todas las Ligas</span>
+  </div>
+  <div class="league-filter" onclick="filterLeague('PL',this)">
+    <div class="lf-dot" style="background:#3d1c6e"></div>
+    <span class="lf-name">Premier League</span>
+  </div>
+  <div class="league-filter" onclick="filterLeague('LL',this)">
+    <div class="lf-dot" style="background:#c8a030"></div>
+    <span class="lf-name">LaLiga</span>
+  </div>
+  <div class="league-filter" onclick="filterLeague('BL',this)">
+    <div class="lf-dot" style="background:#d4200c"></div>
+    <span class="lf-name">Bundesliga</span>
+  </div>
+  <div class="league-filter" onclick="filterLeague('SA',this)">
+    <div class="lf-dot" style="background:#1a5c2a"></div>
+    <span class="lf-name">Serie A</span>
+  </div>
+  <div class="league-filter" onclick="filterLeague('L1',this)">
+    <div class="lf-dot" style="background:#1a3a8c"></div>
+    <span class="lf-name">Ligue 1</span>
+  </div>
+  <div class="league-filter" onclick="filterLeague('UCL',this)">
+    <div class="lf-dot" style="background:#1a4a8c"></div>
+    <span class="lf-name">Champions League</span>
+  </div>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Temporada</div>
+  <div style="padding:4px 16px">
+    <select style="background:var(--sb2);border:1px solid var(--sbrule);color:var(--sbt);font-family:var(--f3);font-size:8.5px;padding:4px 8px;width:100%;cursor:pointer">
+      <option>2024 / 2025</option>
+      <option>2023 / 2024</option>
+      <option>2022 / 2023</option>
+    </select>
+  </div>
+
+  <div class="sb-bottom">
+    <a href="../index.html" class="back-link" style="margin-bottom:8px;display:flex">
+      <span style="margin-right:4px">←</span> Volver al portafolio
+    </a>
+    <div class="sb-info">
+      <strong>Fuente:</strong> Datos simulados<br>
+      <strong>Temporada:</strong> 2024–2025<br>
+      <strong>Última actualización:</strong> Jornada 32<br>
+      <strong>Stack:</strong> HTML · Chart.js · JS
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<main class="main">
+
+<!-- ══════ PAGE: OVERVIEW ══════ -->
+<div class="pag on" id="page-overview">
+
+  <div class="ph" data-g="OVERVIEW">
+    <div class="ph-sup">Football Intelligence · Dashboard Principal</div>
+    <div class="ph-tit">Overview Global — Temporada 2024/25</div>
+    <div class="ph-met">5 ligas · 98 equipos · 1,240 partidos disputados · Jornada 32</div>
+    <div class="ph-act">
+      <div class="live-wrap"><div class="live-dot"></div><span class="live-lbl">Live</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-l">Goles Totales</div><div class="kpi-v">3,847</div><div class="kpi-s">5 ligas · jornada 32</div><div class="kpi-delta up">↑ +4.2% vs 23/24</div></div>
+      <div class="kpi g"><div class="kpi-l">Promedio Goles/J</div><div class="kpi-v g">2.71</div><div class="kpi-s">por partido disputado</div><div class="kpi-delta up">↑ +0.08 pts</div></div>
+      <div class="kpi b"><div class="kpi-l">Asistencias</div><div class="kpi-v b">2,610</div><div class="kpi-s">pases de gol registrados</div><div class="kpi-delta up">↑ +2.8%</div></div>
+      <div class="kpi gold"><div class="kpi-l">Tarjetas Rojas</div><div class="kpi-v gold">142</div><div class="kpi-s">expulsiones 5 ligas</div><div class="kpi-delta dn">↑ +12 vs 23/24</div></div>
+      <div class="kpi c"><div class="kpi-l">% Victorias Local</div><div class="kpi-v c">43.8%</div><div class="kpi-s">ventaja de localía</div><div class="kpi-delta dn">↓ -1.2 pts</div></div>
+    </div>
+
+    <div class="grid-65">
+      <!-- Goles por jornada todas las ligas -->
+      <div class="card">
+        <div class="card-title">Evolución de Goles por Jornada — 5 Ligas</div>
+        <div class="chart-wrap"><canvas id="goalsPerRound"></canvas></div>
+      </div>
+      <!-- Distribución goles por liga -->
+      <div class="card">
+        <div class="card-title">Distribución de Goles por Liga</div>
+        <div class="chart-wrap"><canvas id="goalsByLeague"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-tag">Rendimiento</div>
+    <div class="sec-tit">Líderes de Clasificación — Top 5 Ligas</div>
+    <div class="sec-sub">Equipos punteros al término de la jornada 32 · Temporada 2024/25</div>
+    <div class="grid-3">
+      <!-- Mini tabla PL -->
+      <div class="card">
+        <div class="card-title">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</div>
+        <table class="ct" id="mini-PL"></table>
+      </div>
+      <!-- Mini tabla LL -->
+      <div class="card">
+        <div class="card-title">🇪🇸 LaLiga</div>
+        <table class="ct" id="mini-LL"></table>
+      </div>
+      <!-- Mini tabla BL -->
+      <div class="card">
+        <div class="card-title">🇩🇪 Bundesliga</div>
+        <table class="ct" id="mini-BL"></table>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:14px">
+      <div class="card">
+        <div class="card-title">🇮🇹 Serie A — Top 5</div>
+        <table class="ct" id="mini-SA"></table>
+      </div>
+      <div class="card">
+        <div class="card-title">🇫🇷 Ligue 1 — Top 5</div>
+        <table class="ct" id="mini-L1"></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-tag">Goleadores & Asistentes</div>
+    <div class="sec-tit">Top Scorers & Playmakers — Europa 2024/25</div>
+    <div class="sec-sub">Clasificación global de las cinco grandes ligas</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Tabla de Goleadores</div>
+        <div id="top-scorers"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Tabla de Asistentes</div>
+        <div id="top-assists"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /overview -->
+
+<!-- ══════ PAGE: STANDINGS ══════ -->
+<div class="pag" id="page-standings">
+
+  <div class="ph" data-g="TABLA">
+    <div class="ph-sup">Clasificaciones · Temporada 2024/25</div>
+    <div class="ph-tit">Tablas de Posición Completas</div>
+    <div class="ph-met">Jornada 32 · Datos actualizados</div>
+    <div class="ph-act">
+      <button class="ph-btn active" onclick="showStandings('PL',this)">Premier</button>
+      <button class="ph-btn" onclick="showStandings('LL',this)">LaLiga</button>
+      <button class="ph-btn" onclick="showStandings('BL',this)">Bundesliga</button>
+      <button class="ph-btn" onclick="showStandings('SA',this)">Serie A</button>
+      <button class="ph-btn" onclick="showStandings('L1',this)">Ligue 1</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div id="standings-header"></div>
+    <div class="nota" id="standings-nota"></div>
+    <div class="scroll-x"><table class="ct" id="standings-full"></table></div>
+    <div class="legend" id="standings-legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--blu)"></div>Champions League</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div>Europa League</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--gld)"></div>Conference League</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Descenso/Play-off</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Rendimiento Local vs Visitante</div>
+        <div class="chart-wrap med"><canvas id="homeAway"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Puntos Acumulados — Top 6</div>
+        <div class="chart-wrap med"><canvas id="pointsProgress"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /standings -->
+
+<!-- ══════ PAGE: MATCHES ══════ -->
+<div class="pag" id="page-matches">
+
+  <div class="ph" data-g="MATCHES">
+    <div class="ph-sup">Partidos · Fixtures & Resultados</div>
+    <div class="ph-tit">Calendario de Partidos — Jornadas 32–36</div>
+    <div class="ph-met">Próximos fixtures y resultados recientes · Todas las ligas</div>
+  </div>
+
+  <div class="sec">
+    <div class="tabs">
+      <button class="tab on" onclick="tabMatches('recent',this)">Recientes</button>
+      <button class="tab" onclick="tabMatches('upcoming',this)">Próximos</button>
+      <button class="tab" onclick="tabMatches('ucl',this)">Champions League</button>
+    </div>
+    <div class="grid-2">
+      <div id="matches-col1"></div>
+      <div id="matches-col2"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-tag">Análisis de Resultados</div>
+    <div class="sec-tit">Distribución de Resultados — Jornada 32</div>
+    <div class="sec-sub">Victorias locales · Empates · Victorias visitantes</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Resultados por Liga</div>
+        <div class="chart-wrap med"><canvas id="resultsBar"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Goles por Franja Horaria (min)</div>
+        <div class="chart-wrap med"><canvas id="goalsByMinute"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /matches -->
+
+<!-- ══════ PAGE: PLAYERS ══════ -->
+<div class="pag" id="page-players">
+
+  <div class="ph" data-g="PLAYERS">
+    <div class="ph-sup">Estadísticas Individuales · 2024/25</div>
+    <div class="ph-tit">Rankings de Jugadores — Cinco Grandes Ligas</div>
+    <div class="ph-met">Goles · Asistencias · Tarjetas · Minutos jugados · Valoración</div>
+  </div>
+
+  <div class="sec">
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-l">Goleador Líder</div><div class="kpi-v" style="font-size:15px">Mbappé</div><div class="kpi-s">Real Madrid · LaLiga</div><div class="kpi-delta up">28 goles</div></div>
+      <div class="kpi g"><div class="kpi-l">Más Asistencias</div><div class="kpi-v g" style="font-size:15px">De Bruyne</div><div class="kpi-s">Man City · PL</div><div class="kpi-delta up">18 asistencias</div></div>
+      <div class="kpi b"><div class="kpi-l">Mejor Portero</div><div class="kpi-v b" style="font-size:15px">Courtois</div><div class="kpi-s">Real Madrid · 14 limpias</div><div class="kpi-delta up">↑ .78 SV%</div></div>
+      <div class="kpi gold"><div class="kpi-l">Mejor Valorado</div><div class="kpi-v gold" style="font-size:15px">Vinicius</div><div class="kpi-s">Media: 8.42 / partido</div><div class="kpi-delta up">↑ +0.3 pts</div></div>
+      <div class="kpi c"><div class="kpi-l">Más Tarjetas</div><div class="kpi-v c" style="font-size:15px">17 AM</div><div class="kpi-s">Liga más física</div><div class="kpi-delta dn">↑ Bundesliga</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Top 10 Goleadores — Europa</div>
+        <div id="players-scorers-full"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top 10 Asistentes — Europa</div>
+        <div id="players-assists-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="grid-56">
+      <div class="card">
+        <div class="card-title">Radar de Rendimiento — Comparativa Jugadores</div>
+        <div class="chart-wrap tall"><canvas id="radarPlayers"></canvas></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">Goles por Liga — Distribución</div>
+          <div class="chart-wrap med"><canvas id="goalsByLeaguePie"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Comparativa: Mbappé vs Salah</div>
+          <div class="stat-compare" id="player-compare"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /players -->
+
+<!-- ══════ PAGE: ANALYTICS ══════ -->
+<div class="pag" id="page-analytics">
+
+  <div class="ph" data-g="ANALYTICS">
+    <div class="ph-sup">Análisis Avanzado · Data Intelligence</div>
+    <div class="ph-tit">Tendencias & Patrones — Temporada 2024/25</div>
+    <div class="ph-met">xG · Posesión · Presión · Calor de goles · Correlaciones</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-tag">Expected Goals</div>
+    <div class="sec-tit">xG vs Goles Reales — Top 10 Equipos</div>
+    <div class="sec-sub">Diferencia entre expectativa estadística y rendimiento real · Sobrerendimiento (+) o infrarendimiento (−)</div>
+    <div class="grid-65">
+      <div class="card">
+        <div class="chart-wrap tall"><canvas id="xgChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Eficiencia Ofensiva</div>
+        <div class="sec-sub" style="border:none;padding:0;margin-bottom:10px">Goles / xG ratio</div>
+        <div id="xg-efficiency"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Posesión Promedio vs Puntos — Correlación</div>
+        <div class="chart-wrap"><canvas id="possessionScatter"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Mapa de Calor — Zonas de Gol (minuto)</div>
+        <div class="sec-sub" style="border:none;padding:0;margin-bottom:10px">Distribución temporal de goles por franjas de 15 minutos</div>
+        <div id="goal-heatmap"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Tiros a Puerta vs Goles — Top Equipos</div>
+        <div class="chart-wrap"><canvas id="shotsVsGoals"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Goles Recibidos / Jornada — Top 5 Defensas</div>
+        <div class="chart-wrap"><canvas id="defensiveChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /analytics -->
+
+</main>
+
+<script>
+// ════════════════════════════════════════════════════════
+// DATA — Temporada 2024/25 (simulado realista)
+// ════════════════════════════════════════════════════════
+
+const LEAGUES = {
+  PL:  {name:'Premier League',   flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#3d1c6e', teams:20},
+  LL:  {name:'LaLiga',           flag:'🇪🇸', color:'#c8a030', teams:20},
+  BL:  {name:'Bundesliga',       flag:'🇩🇪', color:'#d4200c', teams:18},
+  SA:  {name:'Serie A',          flag:'🇮🇹', color:'#2a6e3a', teams:20},
+  L1:  {name:'Ligue 1',          flag:'🇫🇷', color:'#1a3a8c', teams:18},
+  UCL: {name:'Champions League', flag:'⭐', color:'#1a4a8c', teams:32}
+};
+
+// Clasificaciones completas por liga
+const STANDINGS = {
+  PL: [
+    {pos:1,  team:'Manchester City',  p:32, w:22, d:5,  l:5,  gf:74, ga:31, pts:71, form:['W','W','D','W','W'], zone:'ucl'},
+    {pos:2,  team:'Arsenal',          p:32, w:21, d:5,  l:6,  gf:68, ga:28, pts:68, form:['W','W','W','D','L'], zone:'ucl'},
+    {pos:3,  team:'Liverpool',        p:32, w:20, d:7,  l:5,  gf:72, ga:35, pts:67, form:['D','W','W','W','W'], zone:'ucl'},
+    {pos:4,  team:'Aston Villa',      p:32, w:18, d:6,  l:8,  gf:62, ga:44, pts:60, form:['W','L','W','W','D'], zone:'ucl'},
+    {pos:5,  team:'Tottenham',        p:32, w:16, d:5,  l:11, gf:59, ga:52, pts:53, form:['L','W','D','W','L'], zone:'el'},
+    {pos:6,  team:'Chelsea',          p:32, w:14, d:8,  l:10, gf:58, ga:50, pts:50, form:['D','D','W','L','W'], zone:'el'},
+    {pos:7,  team:'Newcastle',        p:32, w:14, d:6,  l:12, gf:55, ga:48, pts:48, form:['W','W','L','L','D'], zone:'conf'},
+    {pos:8,  team:'Man United',       p:32, w:12, d:8,  l:12, gf:40, ga:48, pts:44, form:['D','L','W','D','W'], zone:''},
+    {pos:9,  team:'West Ham',         p:32, w:11, d:8,  l:13, gf:44, ga:56, pts:41, form:['L','W','D','L','W'], zone:''},
+    {pos:10, team:'Brighton',         p:32, w:11, d:7,  l:14, gf:52, ga:58, pts:40, form:['W','L','L','D','W'], zone:''},
+    {pos:11, team:'Wolves',           p:32, w:10, d:8,  l:14, gf:38, ga:55, pts:38, form:['D','L','W','L','D'], zone:''},
+    {pos:12, team:'Fulham',           p:32, w:10, d:7,  l:15, gf:42, ga:58, pts:37, form:['L','D','L','W','D'], zone:''},
+    {pos:13, team:'Brentford',        p:32, w:9,  d:9,  l:14, gf:48, ga:60, pts:36, form:['W','D','D','L','L'], zone:''},
+    {pos:14, team:'Crystal Palace',   p:32, w:9,  d:8,  l:15, gf:36, ga:52, pts:35, form:['L','W','D','L','W'], zone:''},
+    {pos:15, team:'Everton',          p:32, w:8,  d:9,  l:15, gf:34, ga:54, pts:33, form:['D','L','D','W','L'], zone:''},
+    {pos:16, team:'Nottm Forest',     p:32, w:8,  d:8,  l:16, gf:32, ga:52, pts:32, form:['L','L','D','W','D'], zone:''},
+    {pos:17, team:'Bournemouth',      p:32, w:8,  d:7,  l:17, gf:38, ga:62, pts:31, form:['W','L','L','D','L'], zone:''},
+    {pos:18, team:'Burnley',          p:32, w:6,  d:6,  l:20, gf:28, ga:68, pts:24, form:['L','L','W','L','L'], zone:'rel'},
+    {pos:19, team:'Sheffield Utd',    p:32, w:5,  d:5,  l:22, gf:24, ga:78, pts:20, form:['L','L','D','L','L'], zone:'rel'},
+    {pos:20, team:'Luton Town',       p:32, w:4,  d:5,  l:23, gf:26, ga:80, pts:17, form:['L','D','L','L','L'], zone:'rel'},
+  ],
+  LL: [
+    {pos:1,  team:'Real Madrid',    p:32, w:23, d:5,  l:4,  gf:82, ga:28, pts:74, form:['W','W','W','D','W'], zone:'ucl'},
+    {pos:2,  team:'Barcelona',      p:32, w:22, d:4,  l:6,  gf:76, ga:34, pts:70, form:['W','D','W','W','L'], zone:'ucl'},
+    {pos:3,  team:'Atlético Madrid',p:32, w:20, d:6,  l:6,  gf:62, ga:30, pts:66, form:['W','W','D','W','D'], zone:'ucl'},
+    {pos:4,  team:'Athletic Club',  p:32, w:16, d:8,  l:8,  gf:52, ga:38, pts:56, form:['D','W','W','L','W'], zone:'ucl'},
+    {pos:5,  team:'Girona',         p:32, w:15, d:7,  l:10, gf:58, ga:44, pts:52, form:['W','L','D','W','W'], zone:'el'},
+    {pos:6,  team:'Real Sociedad',  p:32, w:14, d:8,  l:10, gf:48, ga:40, pts:50, form:['L','W','W','D','W'], zone:'el'},
+    {pos:7,  team:'Villarreal',     p:32, w:12, d:9,  l:11, gf:44, ga:42, pts:45, form:['D','W','L','D','W'], zone:'conf'},
+    {pos:8,  team:'Betis',          p:32, w:12, d:8,  l:12, gf:42, ga:44, pts:44, form:['W','D','L','W','D'], zone:''},
+    {pos:9,  team:'Valencia',       p:32, w:10, d:10, l:12, gf:38, ga:46, pts:40, form:['D','D','W','L','D'], zone:''},
+    {pos:10, team:'Rayo Vallecano', p:32, w:10, d:8,  l:14, gf:36, ga:52, pts:38, form:['L','W','D','L','W'], zone:''},
+    {pos:17, team:'Cádiz',          p:32, w:6,  d:7,  l:19, gf:28, ga:62, pts:25, form:['L','L','D','W','L'], zone:'rel'},
+    {pos:18, team:'Almería',        p:32, w:5,  d:6,  l:21, gf:24, ga:72, pts:21, form:['L','D','L','L','W'], zone:'rel'},
+    {pos:19, team:'Granada',        p:32, w:4,  d:6,  l:22, gf:22, ga:76, pts:18, form:['L','L','L','D','L'], zone:'rel'},
+    {pos:20, team:'Las Palmas',     p:32, w:4,  d:5,  l:23, gf:20, ga:80, pts:17, form:['L','L','D','L','L'], zone:'rel'},
+  ],
+  BL: [
+    {pos:1,  team:'Bayer Leverkusen',p:32, w:24, d:6,  l:2,  gf:84, ga:26, pts:78, form:['W','W','D','W','W'], zone:'ucl'},
+    {pos:2,  team:'Bayern Munich',   p:32, w:22, d:4,  l:6,  gf:80, ga:38, pts:70, form:['W','W','W','L','W'], zone:'ucl'},
+    {pos:3,  team:'Stuttgart',       p:32, w:18, d:6,  l:8,  gf:64, ga:44, pts:60, form:['W','D','W','W','L'], zone:'ucl'},
+    {pos:4,  team:'RB Leipzig',      p:32, w:17, d:5,  l:10, gf:60, ga:42, pts:56, form:['D','W','L','W','W'], zone:'ucl'},
+    {pos:5,  team:'Borussia Dortmund',p:32,w:15, d:6, l:11,  gf:56, ga:50, pts:51, form:['W','L','D','W','D'], zone:'el'},
+    {pos:6,  team:'Eintracht Frankfurt',p:32,w:14,d:7,l:11,  gf:52, ga:48, pts:49, form:['L','W','W','D','W'], zone:'el'},
+    {pos:16, team:'Darmstadt',       p:32, w:5,  d:6,  l:21, gf:28, ga:72, pts:21, form:['L','L','D','L','W'], zone:'rel'},
+    {pos:17, team:'VfL Bochum',      p:32, w:4,  d:5,  l:23, gf:22, ga:78, pts:17, form:['L','D','L','L','L'], zone:'rel'},
+    {pos:18, team:'Mainz',           p:32, w:3,  d:6,  l:23, gf:20, ga:80, pts:15, form:['L','L','L','D','L'], zone:'rel'},
+  ],
+  SA: [
+    {pos:1,  team:'Inter Milán',    p:32, w:24, d:5,  l:3,  gf:80, ga:24, pts:77, form:['W','W','W','W','D'], zone:'ucl'},
+    {pos:2,  team:'AC Milán',       p:32, w:20, d:6,  l:6,  gf:68, ga:36, pts:66, form:['W','D','W','W','L'], zone:'ucl'},
+    {pos:3,  team:'Juventus',       p:32, w:18, d:8,  l:6,  gf:58, ga:34, pts:62, form:['D','W','D','W','W'], zone:'ucl'},
+    {pos:4,  team:'Atalanta',       p:32, w:18, d:5,  l:9,  gf:72, ga:44, pts:59, form:['W','W','L','D','W'], zone:'ucl'},
+    {pos:5,  team:'Lazio',          p:32, w:15, d:7,  l:10, gf:56, ga:46, pts:52, form:['W','D','L','W','W'], zone:'el'},
+    {pos:6,  team:'Roma',           p:32, w:13, d:9,  l:10, gf:50, ga:44, pts:48, form:['D','W','D','L','W'], zone:'el'},
+    {pos:18, team:'Salernitana',    p:32, w:4,  d:6,  l:22, gf:22, ga:76, pts:18, form:['L','D','L','L','L'], zone:'rel'},
+    {pos:19, team:'Frosinone',      p:32, w:3,  d:7,  l:22, gf:20, ga:72, pts:16, form:['D','L','L','D','L'], zone:'rel'},
+    {pos:20, team:'Verona',         p:32, w:3,  d:5,  l:24, gf:18, ga:80, pts:14, form:['L','L','D','L','L'], zone:'rel'},
+  ],
+  L1: [
+    {pos:1,  team:'Paris SG',       p:32, w:22, d:6,  l:4,  gf:72, ga:30, pts:72, form:['W','W','D','W','W'], zone:'ucl'},
+    {pos:2,  team:'Monaco',         p:32, w:20, d:5,  l:7,  gf:64, ga:34, pts:65, form:['W','D','W','W','L'], zone:'ucl'},
+    {pos:3,  team:'Brest',          p:32, w:18, d:6,  l:8,  gf:56, ga:38, pts:60, form:['W','W','L','D','W'], zone:'ucl'},
+    {pos:4,  team:'Lille',          p:32, w:16, d:8,  l:8,  gf:52, ga:36, pts:56, form:['D','W','W','D','W'], zone:'ucl'},
+    {pos:5,  team:'Nice',           p:32, w:15, d:6,  l:11, gf:48, ga:42, pts:51, form:['L','W','D','W','W'], zone:'el'},
+    {pos:6,  team:'Lyon',           p:32, w:13, d:8,  l:11, gf:46, ga:44, pts:47, form:['W','L','D','W','D'], zone:'el'},
+    {pos:16, team:'Lorient',        p:32, w:5,  d:6,  l:21, gf:26, ga:64, pts:21, form:['L','D','W','L','L'], zone:'rel'},
+    {pos:17, team:'Metz',           p:32, w:4,  d:5,  l:23, gf:22, ga:70, pts:17, form:['L','L','D','L','L'], zone:'rel'},
+    {pos:18, team:'Clermont',       p:32, w:3,  d:4,  l:25, gf:18, ga:78, pts:13, form:['L','L','L','D','L'], zone:'rel'},
+  ]
+};
+
+// Goleadores globales
+const TOP_SCORERS = [
+  {name:'K. Mbappé',      team:'Real Madrid',      league:'LaLiga',        goals:28, assists:10, mins:2680, nationality:'🇫🇷'},
+  {name:'E. Haaland',     team:'Manchester City',  league:'Premier League',goals:24, assists:6,  mins:2420, nationality:'🇳🇴'},
+  {name:'V. Osimhen',     team:'Napoli',           league:'Serie A',       goals:22, assists:5,  mins:2180, nationality:'🇳🇬'},
+  {name:'H. Kane',        team:'Bayern Munich',    league:'Bundesliga',    goals:21, assists:8,  mins:2780, nationality:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},
+  {name:'M. Salah',       team:'Liverpool',        league:'Premier League',goals:20, assists:12, mins:2820, nationality:'🇪🇬'},
+  {name:'R. Lewandowski', team:'Barcelona',        league:'LaLiga',        goals:19, assists:7,  mins:2640, nationality:'🇵🇱'},
+  {name:'A. Dovbyk',      team:'Girona',           league:'LaLiga',        goals:18, assists:4,  mins:2340, nationality:'🇺🇦'},
+  {name:'L. Martínez',    team:'Inter Milán',      league:'Serie A',       goals:17, assists:5,  mins:2200, nationality:'🇦🇷'},
+  {name:'N. Jackson',     team:'Chelsea',          league:'Premier League',goals:16, assists:4,  mins:2180, nationality:'🇸🇳'},
+  {name:'K. Adeyemi',     team:'B. Dortmund',      league:'Bundesliga',    goals:15, assists:8,  mins:1980, nationality:'🇩🇪'},
+];
+const TOP_ASSISTS = [
+  {name:'K. De Bruyne',   team:'Manchester City',  league:'Premier League',assists:18, goals:8,  mins:2420, nationality:'🇧🇪'},
+  {name:'J. Bellingham',  team:'Real Madrid',      league:'LaLiga',        assists:14, goals:16, mins:2680, nationality:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},
+  {name:'M. Salah',       team:'Liverpool',        league:'Premier League',assists:12, goals:20, mins:2820, nationality:'🇪🇬'},
+  {name:'L. Díaz',        team:'Liverpool',        league:'Premier League',assists:11, goals:12, mins:2560, nationality:'🇨🇴'},
+  {name:'B. Fernandes',   team:'Manchester Utd',   league:'Premier League',assists:11, goals:8,  mins:2740, nationality:'🇵🇹'},
+  {name:'A. Sané',        team:'Bayern Munich',    league:'Bundesliga',    assists:10, goals:10, mins:2280, nationality:'🇩🇪'},
+  {name:'O. Dembélé',     team:'Paris SG',         league:'Ligue 1',       assists:10, goals:12, mins:2380, nationality:'🇫🇷'},
+  {name:'Vinicius Jr.',   team:'Real Madrid',      league:'LaLiga',        assists:9,  goals:18, mins:2620, nationality:'🇧🇷'},
+  {name:'P. Schick',      team:'B. Leverkusen',    league:'Bundesliga',    assists:9,  goals:14, mins:2240, nationality:'🇨🇿'},
+  {name:'C. Pulisic',     team:'AC Milán',         league:'Serie A',       assists:8,  goals:12, mins:2140, nationality:'🇺🇸'},
+];
+
+// Partidos recientes
+const MATCHES_RECENT = [
+  {home:'Manchester City', away:'Arsenal',      scoreH:2, scoreA:1, date:'28 Mar 2025', league:'PL',  status:'FT', odds:{h:1.8, d:3.6, a:4.2}},
+  {home:'Real Madrid',     away:'Barcelona',    scoreH:3, scoreA:2, date:'27 Mar 2025', league:'LL',  status:'FT', odds:{h:1.9, d:3.5, a:3.9}},
+  {home:'B. Leverkusen',   away:'Bayern Munich',scoreH:2, scoreA:2, date:'27 Mar 2025', league:'BL',  status:'FT', odds:{h:2.4, d:3.2, a:2.8}},
+  {home:'Inter Milán',     away:'AC Milán',     scoreH:1, scoreA:0, date:'26 Mar 2025', league:'SA',  status:'FT', odds:{h:2.1, d:3.4, a:3.2}},
+  {home:'Paris SG',        away:'Monaco',       scoreH:4, scoreA:1, date:'26 Mar 2025', league:'L1',  status:'FT', odds:{h:1.5, d:4.0, a:6.0}},
+  {home:'Liverpool',       away:'Chelsea',      scoreH:2, scoreA:1, date:'25 Mar 2025', league:'PL',  status:'FT', odds:{h:1.7, d:3.8, a:4.5}},
+];
+const MATCHES_UPCOMING = [
+  {home:'Arsenal',         away:'Man United',   scoreH:null, scoreA:null, date:'5 Abr 2025',  league:'PL',  status:'18:30', odds:{h:1.6, d:3.8, a:5.5}},
+  {home:'Barcelona',       away:'Atlético',     scoreH:null, scoreA:null, date:'6 Abr 2025',  league:'LL',  status:'20:00', odds:{h:1.9, d:3.4, a:3.8}},
+  {home:'Bayern Munich',   away:'Dortmund',     scoreH:null, scoreA:null, date:'6 Abr 2025',  league:'BL',  status:'17:30', odds:{h:1.5, d:4.0, a:6.0}},
+  {home:'Juventus',        away:'Inter Milán',  scoreH:null, scoreA:null, date:'7 Abr 2025',  league:'SA',  status:'19:45', odds:{h:2.8, d:3.2, a:2.4}},
+  {home:'Man City',        away:'Liverpool',    scoreH:null, scoreA:null, date:'7 Abr 2025',  league:'PL',  status:'16:00', odds:{h:1.9, d:3.6, a:3.8}},
+  {home:'Real Madrid',     away:'Villarreal',   scoreH:null, scoreA:null, date:'8 Abr 2025',  league:'LL',  status:'19:00', odds:{h:1.4, d:4.5, a:7.0}},
+];
+const MATCHES_UCL = [
+  {home:'Real Madrid',     away:'Manchester City',scoreH:2,scoreA:3, date:'12 Mar 2025', league:'UCL', status:'QF 1L', odds:{h:2.2, d:3.4, a:3.0}},
+  {home:'Arsenal',         away:'Bayern Munich', scoreH:1, scoreA:0, date:'12 Mar 2025', league:'UCL', status:'QF 1L', odds:{h:2.8, d:3.5, a:2.4}},
+  {home:'B. Leverkusen',   away:'Atlético Madrid',scoreH:2,scoreA:0,date:'13 Mar 2025', league:'UCL', status:'QF 1L', odds:{h:2.0, d:3.6, a:3.4}},
+  {home:'Barcelona',       away:'Dortmund',      scoreH:3, scoreA:1, date:'13 Mar 2025', league:'UCL', status:'QF 1L', odds:{h:1.7, d:3.8, a:4.5}},
+];
+
+// ════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.pag').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.lnk').forEach(l => l.classList.remove('on'));
+  document.getElementById('page-' + id).classList.add('on');
+  event.currentTarget.classList.add('on');
+
+  // Init charts on first show
+  if (id === 'overview'   && !window._init_overview)   { initOverview();   window._init_overview = true; }
+  if (id === 'standings'  && !window._init_standings)  { initStandings();  window._init_standings = true; }
+  if (id === 'matches'    && !window._init_matches)    { initMatches();    window._init_matches = true; }
+  if (id === 'players'    && !window._init_players)    { initPlayers();    window._init_players = true; }
+  if (id === 'analytics'  && !window._init_analytics)  { initAnalytics();  window._init_analytics = true; }
+}
+
+function filterLeague(id, el) {
+  document.querySelectorAll('.league-filter').forEach(l => { l.classList.remove('active'); l.querySelector('.lf-name').classList.remove('active'); });
+  el.classList.add('active'); el.querySelector('.lf-name').classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+// CHART DEFAULTS
+// ════════════════════════════════════════════════════════
+const INK = '#1a1410'; const MUT = '#8a7460'; const RULE = '#c8b89a';
+const COLORS = {
+  PL:'rgba(61,28,110,.75)',LL:'rgba(200,160,48,.75)',BL:'rgba(212,32,12,.75)',
+  SA:'rgba(42,110,58,.75)',L1:'rgba(26,58,140,.75)',UCL:'rgba(26,74,140,.75)',
+  acc:'rgba(124,61,30,.75)',grn:'rgba(45,90,39,.75)',blu:'rgba(26,58,92,.75)',
+  gld:'rgba(200,160,48,.75)',cyan:'rgba(26,112,112,.75)',red:'rgba(139,26,26,.75)'
+};
+
+Chart.defaults.font.family = "'IBM Plex Mono', monospace";
+Chart.defaults.font.size = 10;
+Chart.defaults.color = MUT;
+Chart.defaults.plugins.legend.labels.boxWidth = 10;
+Chart.defaults.plugins.legend.labels.padding = 14;
+Chart.defaults.plugins.tooltip.backgroundColor = INK;
+Chart.defaults.plugins.tooltip.borderColor = RULE;
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.titleFont = {family:"'Fraunces', serif", size:13};
+Chart.defaults.plugins.tooltip.bodyFont  = {family:"'IBM Plex Mono', monospace", size:10};
+
+function makeChart(id, cfg) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  return new Chart(el.getContext('2d'), cfg);
+}
+
+// ════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════
+function N(n) { return n?.toLocaleString('es-ES') ?? '—'; }
+function formPills(arr) {
+  return `<div class="form-pills">${arr.map(r=>`<div class="fp ${r}">${r}</div>`).join('')}</div>`;
+}
+function zoneStyle(z) {
+  if(z==='ucl')  return 'border-left:3px solid #1a3a5c';
+  if(z==='el')   return 'border-left:3px solid #1a7070';
+  if(z==='conf') return 'border-left:3px solid #c8a030';
+  if(z==='rel')  return 'border-left:3px solid #8b1a1a';
+  return '';
+}
+function miniTable(leagueId, elId, top=5) {
+  const rows = (STANDINGS[leagueId]||[]).slice(0,top);
+  const el = document.getElementById(elId); if(!el) return;
+  el.innerHTML = `<thead><tr>
+    <th>#</th><th>Equipo</th><th class="r">PJ</th><th class="r">Pts</th><th>Forma</th>
+  </tr></thead><tbody>${rows.map(r=>`<tr style="${zoneStyle(r.zone)}">
+    <td class="mono">${r.pos}</td>
+    <td class="team-name">${r.team}</td>
+    <td class="num">${r.p}</td>
+    <td class="num" style="font-weight:600">${r.pts}</td>
+    <td>${formPills(r.form)}</td>
+  </tr>`).join('')}</tbody>`;
+}
+function playerRows(data, statKey, colorClass, el, max) {
+  if(!el) return;
+  const top = Math.max(...data.map(d=>d[statKey]));
+  el.innerHTML = data.map((p,i)=>`<div class="player-row">
+    <div class="player-rank">${i+1}</div>
+    <div class="player-info">
+      <div class="player-name">${p.nationality} ${p.name}</div>
+      <div class="player-team">${p.team} · ${p.league}</div>
+    </div>
+    <div class="player-bar-wrap"><div class="player-bar ${colorClass}" style="width:${p[statKey]/top*100}%"></div></div>
+    <div class="player-stat ${colorClass}">${p[statKey]}</div>
+  </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+// INIT OVERVIEW
+// ════════════════════════════════════════════════════════
+function initOverview() {
+  // Goals per round
+  const rounds = Array.from({length:32},(_,i)=>i+1);
+  const base = [24,28,26,30,22,27,31,25,29,26,28,24,32,27,30,26,25,31,28,24,29,27,33,26,30,24,28,32,26,29,27,31];
+  makeChart('goalsPerRound',{
+    type:'line',
+    data:{
+      labels: rounds.map(r=>`J${r}`),
+      datasets:[
+        {label:'Premier League', data:base.map(v=>v+Math.floor(Math.random()*4-2)),  borderColor:COLORS.PL, backgroundColor:'transparent', tension:.4, pointRadius:2, pointHoverRadius:4},
+        {label:'LaLiga',         data:base.map(v=>v+Math.floor(Math.random()*4-2)),  borderColor:COLORS.LL, backgroundColor:'transparent', tension:.4, pointRadius:2, pointHoverRadius:4},
+        {label:'Bundesliga',     data:base.map(v=>v+Math.floor(Math.random()*6-2)+2),borderColor:COLORS.BL, backgroundColor:'transparent', tension:.4, pointRadius:2, pointHoverRadius:4},
+        {label:'Serie A',        data:base.map(v=>v+Math.floor(Math.random()*4-3)),  borderColor:COLORS.SA, backgroundColor:'transparent', tension:.4, pointRadius:2, pointHoverRadius:4},
+        {label:'Ligue 1',        data:base.map(v=>v+Math.floor(Math.random()*4-2)),  borderColor:COLORS.L1, backgroundColor:'transparent', tension:.4, pointRadius:2, pointHoverRadius:4},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      scales:{
+        x:{grid:{color:'rgba(200,184,154,.1)'},ticks:{maxTicksLimit:12}},
+        y:{grid:{color:'rgba(200,184,154,.1)'},min:15,max:42,ticks:{stepSize:5}}
+      },
+      plugins:{legend:{position:'top'}}
+    }
+  });
+  // Goals by league donut
+  makeChart('goalsByLeague',{
+    type:'doughnut',
+    data:{
+      labels:['Premier League','LaLiga','Bundesliga','Serie A','Ligue 1'],
+      datasets:[{
+        data:[838,812,924,792,681],
+        backgroundColor:[COLORS.PL,COLORS.LL,COLORS.BL,COLORS.SA,COLORS.L1],
+        borderColor:'#faf7f0',borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:'60%',
+      plugins:{legend:{position:'right'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} goles`}}}
+    }
+  });
+  // Mini tables
+  miniTable('PL','mini-PL',5);
+  miniTable('LL','mini-LL',5);
+  miniTable('BL','mini-BL',5);
+  miniTable('SA','mini-SA',5);
+  miniTable('L1','mini-L1',5);
+  // Top scorers overview (5)
+  playerRows(TOP_SCORERS.slice(0,5),'goals','',document.getElementById('top-scorers'),28);
+  playerRows(TOP_ASSISTS.slice(0,5),'assists','g',document.getElementById('top-assists'),18);
+}
+
+// ════════════════════════════════════════════════════════
+// INIT STANDINGS
+// ════════════════════════════════════════════════════════
+let currentLeague = 'PL';
+function initStandings() {
+  showStandings('PL', document.querySelector('.ph-btn.active'));
+  // Home/Away chart
+  makeChart('homeAway',{
+    type:'bar',
+    data:{
+      labels:['Man City','Arsenal','Real Madrid','Barcelona','B. Leverkusen','Inter Milán'],
+      datasets:[
+        {label:'Pts Local', data:[40,38,42,38,44,42], backgroundColor:COLORS.blu},
+        {label:'Pts Visit.', data:[31,30,32,32,34,35], backgroundColor:COLORS.acc},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{x:{grid:{color:'rgba(200,184,154,.1)'}},y:{grid:{color:'rgba(200,184,154,.1)'}}},
+      plugins:{legend:{position:'top'}}
+    }
+  });
+  // Points progress line
+  const j=[1,5,10,15,20,25,30,32];
+  makeChart('pointsProgress',{
+    type:'line',
+    data:{
+      labels:j.map(n=>`J${n}`),
+      datasets:[
+        {label:'B. Leverkusen', data:[3,14,27,40,52,64,74,78], borderColor:COLORS.BL, tension:.4, pointRadius:2, fill:false},
+        {label:'Man City',      data:[3,13,24,38,50,58,66,71], borderColor:COLORS.PL, tension:.4, pointRadius:2, fill:false},
+        {label:'Inter Milán',   data:[3,13,26,38,51,61,71,77], borderColor:COLORS.SA, tension:.4, pointRadius:2, fill:false},
+        {label:'Real Madrid',   data:[3,14,25,38,48,58,67,74], borderColor:COLORS.LL, tension:.4, pointRadius:2, fill:false},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{x:{grid:{color:'rgba(200,184,154,.1)'}},y:{min:0,max:85,grid:{color:'rgba(200,184,154,.1)'}}},
+      plugins:{legend:{position:'top'}}
+    }
+  });
+}
+function showStandings(lgId, btn) {
+  currentLeague = lgId;
+  document.querySelectorAll('.ph-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const data = STANDINGS[lgId];
+  if(!data) return;
+  const lg = LEAGUES[lgId];
+  document.getElementById('standings-header').innerHTML =
+    `<div class="sec-tag">Clasificación Completa</div><div class="sec-tit">${lg.flag} ${lg.name}</div>`;
+  document.getElementById('standings-nota').innerHTML =
+    `<strong>Jornada 32</strong> de ${lgId==='BL'||lgId==='L1'?34:38} · Temporada 2024/25 · Simulación basada en datos públicos históricos`;
+  const el = document.getElementById('standings-full');
+  el.innerHTML = `<thead><tr>
+    <th>#</th><th>Equipo</th>
+    <th class="r tip" data-tip="Partidos Jugados">PJ</th>
+    <th class="r tip" data-tip="Victorias">V</th>
+    <th class="r tip" data-tip="Empates">E</th>
+    <th class="r tip" data-tip="Derrotas">D</th>
+    <th class="r tip" data-tip="Goles a Favor">GF</th>
+    <th class="r tip" data-tip="Goles en Contra">GC</th>
+    <th class="r tip" data-tip="Diferencia de Goles">DG</th>
+    <th class="r tip" data-tip="Puntos">Pts</th>
+    <th>Forma Reciente</th>
+  </tr></thead><tbody>${data.map(r=>`<tr class="pos-${r.pos}" style="${zoneStyle(r.zone)}">
+    <td class="mono"><span class="pos-num">${r.pos}</span></td>
+    <td class="team-name">${r.team}</td>
+    <td class="num">${r.p}</td>
+    <td class="num">${r.w}</td>
+    <td class="num">${r.d}</td>
+    <td class="num">${r.l}</td>
+    <td class="num">${r.gf}</td>
+    <td class="num">${r.ga}</td>
+    <td class="num" style="color:${r.gf-r.ga>=0?'var(--grn)':'var(--red)'}">
+      ${r.gf-r.ga>=0?'+':''}${r.gf-r.ga}</td>
+    <td class="num" style="font-weight:700;font-size:13px">${r.pts}</td>
+    <td>${formPills(r.form)}</td>
+  </tr>`).join('')}</tbody>`;
+}
+
+// ════════════════════════════════════════════════════════
+// INIT MATCHES
+// ════════════════════════════════════════════════════════
+let currentMatchTab = 'recent';
+function initMatches() {
+  renderMatches('recent');
+  // Results by league
+  makeChart('resultsBar',{
+    type:'bar',
+    data:{
+      labels:['Premier','LaLiga','Bundesliga','Serie A','Ligue 1'],
+      datasets:[
+        {label:'Victoria Local', data:[112,118,96,106,96], backgroundColor:COLORS.blu},
+        {label:'Empate',         data:[78,72,66,74,58],    backgroundColor:COLORS.acc},
+        {label:'Victoria Visit.',data:[50,50,36,60,38],    backgroundColor:COLORS.grn},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{x:{stacked:true,grid:{color:'rgba(200,184,154,.1)'}},y:{stacked:true,grid:{display:false}}},
+      plugins:{legend:{position:'top'}}
+    }
+  });
+  // Goals by minute
+  const minLabels=['1-15','16-30','31-45','46-60','61-75','76-90','90+'];
+  makeChart('goalsByMinute',{
+    type:'bar',
+    data:{
+      labels:minLabels,
+      datasets:[{
+        label:'Goles',
+        data:[8,12,18,10,14,22,8],
+        backgroundColor:minLabels.map((_,i)=>i>=5?COLORS.red:COLORS.acc),
+        borderRadius:2
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{x:{grid:{color:'rgba(200,184,154,.1)'}},y:{grid:{color:'rgba(200,184,154,.1)'}}},
+      plugins:{legend:{display:false}}
+    }
+  });
+}
+function tabMatches(tab, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderMatches(tab);
+}
+function renderMatches(tab) {
+  const data = tab==='recent'?MATCHES_RECENT:tab==='upcoming'?MATCHES_UPCOMING:MATCHES_UCL;
+  const half = Math.ceil(data.length/2);
+  const renderCard = m => {
+    const isUpcoming = m.scoreH===null;
+    const lname = LEAGUES[m.league]?.name || m.league;
+    return `<div class="match-card">
+      <div class="match-top">
+        <span class="match-league">${LEAGUES[m.league]?.flag||''} ${lname}</span>
+        <span class="match-date">${m.date}</span>
+      </div>
+      <div class="match-body">
+        <div class="match-team">${m.home}</div>
+        <div>
+          <div class="match-score ${m.status==='LIVE'?'live':''}">${isUpcoming?`<span style="font-family:var(--f3);font-size:11px;color:var(--mut)">${m.status}</span>`:m.scoreH+' – '+m.scoreA}</div>
+          <div class="match-score-sub">${isUpcoming?'Próximo':'FT'}</div>
+        </div>
+        <div class="match-team away">${m.away}</div>
+      </div>
+      <div class="match-odds">
+        <div class="odd"><div class="odd-l">1 Local</div><div class="odd-v">${m.odds.h}</div></div>
+        <div class="odd"><div class="odd-l">X Empate</div><div class="odd-v">${m.odds.d}</div></div>
+        <div class="odd"><div class="odd-l">2 Visit.</div><div class="odd-v">${m.odds.a}</div></div>
+      </div>
+    </div>`;
+  };
+  document.getElementById('matches-col1').innerHTML = data.slice(0,half).map(renderCard).join('');
+  document.getElementById('matches-col2').innerHTML = data.slice(half).map(renderCard).join('');
+}
+
+// ════════════════════════════════════════════════════════
+// INIT PLAYERS
+// ════════════════════════════════════════════════════════
+function initPlayers() {
+  playerRows(TOP_SCORERS,'goals','',document.getElementById('players-scorers-full'),28);
+  playerRows(TOP_ASSISTS,'assists','g',document.getElementById('players-assists-full'),18);
+  // Radar
+  makeChart('radarPlayers',{
+    type:'radar',
+    data:{
+      labels:['Goles','Asistencias','Disparo Pres.','Regates','Pases Clave','Velocidad','Aéreos'],
+      datasets:[
+        {label:'K. Mbappé',     data:[95,62,78,90,70,98,55], borderColor:COLORS.LL, backgroundColor:'rgba(200,160,48,.08)', pointRadius:3},
+        {label:'E. Haaland',    data:[92,42,72,60,50,85,90], borderColor:COLORS.PL, backgroundColor:'rgba(61,28,110,.08)', pointRadius:3},
+        {label:'V. Osimhen',    data:[85,40,80,70,55,88,88], borderColor:COLORS.acc, backgroundColor:'rgba(124,61,30,.08)', pointRadius:3},
+        {label:'K. De Bruyne',  data:[45,90,55,65,95,72,40], borderColor:COLORS.grn, backgroundColor:'rgba(45,90,39,.08)', pointRadius:3},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{r:{grid:{color:'rgba(200,184,154,.18)'},pointLabels:{font:{size:9,family:"'IBM Plex Mono',monospace"}},ticks:{display:false},min:0,max:100}},
+      plugins:{legend:{position:'right'}}
+    }
+  });
+  // Goals by league pie
+  makeChart('goalsByLeaguePie',{
+    type:'pie',
+    data:{
+      labels:['PL','LaLiga','Bundesliga','Serie A','Ligue 1'],
+      datasets:[{
+        data:[78,68,62,56,58],
+        backgroundColor:[COLORS.PL,COLORS.LL,COLORS.BL,COLORS.SA,COLORS.L1],
+        borderColor:'#faf7f0',borderWidth:2
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'}}}
+  });
+  // Comparison
+  const cmpStats = [
+    {label:'Goles',   a:28, b:20, max:28},
+    {label:'Asist.',  a:10, b:12, max:12},
+    {label:'Mins',    a:2680,b:2820,max:2820},
+    {label:'Tarj.',   a:2,  b:3,  max:5},
+    {label:'Sprints', a:98, b:82, max:100},
+  ];
+  document.getElementById('player-compare').innerHTML = `
+    <div class="sc-row"><div></div><div class="sc-label" style="font-size:8px;color:var(--acc)">Mbappé</div><div class="sc-label" style="font-size:8px;color:var(--blu)">Salah</div></div>
+    ${cmpStats.map(s=>{
+      const pA = s.a/s.max*100; const pB = s.b/s.max*100;
+      return `<div class="sc-row">
+        <div class="sc-val-a">${s.a}</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div class="sc-name">${s.label}</div>
+          <div style="display:flex;width:100%;height:5px;background:var(--rule2)">
+            <div style="margin-left:auto;width:${pA}%;height:100%;background:var(--acc)"></div>
+            <div style="width:${pB}%;height:100%;background:var(--blu)"></div>
+          </div>
+        </div>
+        <div class="sc-val-b">${s.b}</div>
+      </div>`;
+    }).join('')}`;
+}
+
+// ════════════════════════════════════════════════════════
+// INIT ANALYTICS
+// ════════════════════════════════════════════════════════
+function initAnalytics() {
+  const teams = ['Man City','B. Leverkusen','Arsenal','Real Madrid','Inter Milán','Barcelona','B. Dortmund','Atlético','Liverpool','Juventus'];
+  const xg    = [78.4, 80.2, 72.6, 84.0, 76.8, 78.0, 60.4, 56.2, 74.6, 54.8];
+  const goals = [74,   84,   68,   82,   80,   76,   56,   62,   72,   58];
+  // xG chart
+  makeChart('xgChart',{
+    type:'bar',
+    data:{
+      labels:teams,
+      datasets:[
+        {label:'xG Esperados', data:xg, backgroundColor:COLORS.acc, borderRadius:2},
+        {label:'Goles Reales', data:goals, backgroundColor:COLORS.blu, borderRadius:2},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{
+        x:{grid:{color:'rgba(200,184,154,.1)'},min:40,max:90},
+        y:{grid:{display:false}}
+      },
+      plugins:{legend:{position:'top'}}
+    }
+  });
+  // xG efficiency
+  const eff = teams.map((t,i)=>({team:t, diff:goals[i]-xg[i], ratio:(goals[i]/xg[i]).toFixed(2)}))
+    .sort((a,b)=>b.diff-a.diff);
+  document.getElementById('xg-efficiency').innerHTML = eff.map(e=>`
+    <div class="player-row">
+      <div class="player-info"><div class="player-name">${e.team}</div><div class="player-team">Ratio: ${e.ratio}</div></div>
+      <div style="font-family:var(--f3);font-size:12px;font-weight:600;color:${e.diff>=0?'var(--grn)':'var(--red)'}">${e.diff>=0?'+':''}${e.diff.toFixed(1)}</div>
+    </div>`).join('');
+  // Possession scatter
+  const posData = [
+    {team:'Man City',pts:71,pos:63},{team:'Arsenal',pts:68,pos:58},{team:'Barcelona',pts:70,pos:62},
+    {team:'Real Madrid',pts:74,pos:55},{team:'B. Leverkusen',pts:78,pos:54},{team:'Inter Milán',pts:77,pos:52},
+    {team:'Liverpool',pts:67,pos:56},{team:'Atlético',pts:66,pos:48},{team:'PSG',pts:72,pos:60},
+    {team:'Dortmund',pts:51,pos:52},{team:'Newcastle',pts:48,pos:46},{team:'Betis',pts:44,pos:54},
+  ];
+  makeChart('possessionScatter',{
+    type:'scatter',
+    data:{datasets:[{
+      label:'Equipos',
+      data:posData.map(d=>({x:d.pos,y:d.pts,label:d.team})),
+      backgroundColor:COLORS.acc, pointRadius:6, pointHoverRadius:9
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{title:{display:true,text:'% Posesión',font:{family:"'IBM Plex Mono'",size:9}},min:42,max:68,grid:{color:'rgba(200,184,154,.1)'}},
+        y:{title:{display:true,text:'Puntos',font:{family:"'IBM Plex Mono'",size:9}},min:40,max:82,grid:{color:'rgba(200,184,154,.1)'}}
+      },
+      plugins:{tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: ${ctx.raw.y}pts · ${ctx.raw.x}% pos`}}}
+    }
+  });
+  // Goal heatmap
+  const heatDays   = ['Lunes','Martes','Miérc.','Jueves','Viernes','Sáb.','Dom.'];
+  const heatSlots  = ['1-15','16-30','31-45','46-60','61-75','76-90','90+'];
+  const heatData   = [
+    [4,6,8,5,7,14,18],[3,5,7,4,8,16,20],[5,7,9,6,10,18,22],
+    [2,4,6,3,6,12,14],[4,6,8,5,9,16,18],[8,12,18,10,14,26,30],[6,10,14,8,12,22,26]
+  ];
+  const maxH = Math.max(...heatData.flat());
+  const acc = '#7c3d1e';
+  document.getElementById('goal-heatmap').innerHTML = `
+    <div class="hmap-col-labels">${heatSlots.map(s=>`<div class="hmap-col-label">${s}</div>`).join('')}</div>
+    <div class="heatmap-wrap">${heatDays.map((d,i)=>`
+      <div class="hmap-row">
+        <div class="hmap-label">${d}</div>
+        <div class="hmap-cells">${heatData[i].map((v,j)=>`
+          <div class="hmap-cell" data-tip="${d} · ${heatSlots[j]}: ${v} goles"
+            style="background:${acc};opacity:${0.05+v/maxH*0.9}"></div>`).join('')}
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="legend" style="margin-top:8px">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--acc);opacity:.2"></div>Baja actividad</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--acc);opacity:.9"></div>Alta actividad</div>
+    </div>`;
+  // Shots vs Goals
+  makeChart('shotsVsGoals',{
+    type:'scatter',
+    data:{datasets:[
+      {label:'Equipos',
+       data:[
+        {x:445,y:74,label:'Man City'},{x:418,y:68,label:'Arsenal'},{x:460,y:82,label:'Real Madrid'},
+        {x:472,y:84,label:'B. Leverkusen'},{x:450,y:80,label:'Inter Milán'},{x:440,y:76,label:'Barcelona'},
+        {x:380,y:62,label:'Atlético'},{x:400,y:56,label:'Dortmund'},{x:350,y:48,label:'Newcastle'},
+        {x:320,y:40,label:'Man Utd'},{x:310,y:36,label:'Fulham'},{x:290,y:32,label:'Burnley'},
+       ],
+       backgroundColor:COLORS.cyan, pointRadius:6}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{title:{display:true,text:'Tiros totales',font:{size:9}},min:260,max:490,grid:{color:'rgba(200,184,154,.1)'}},
+        y:{title:{display:true,text:'Goles',font:{size:9}},min:28,max:90,grid:{color:'rgba(200,184,154,.1)'}}
+      },
+      plugins:{tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: ${ctx.raw.y}G / ${ctx.raw.x} tiros`}}}
+    }
+  });
+  // Defensive chart
+  makeChart('defensiveChart',{
+    type:'line',
+    data:{
+      labels:['J10','J15','J20','J25','J30','J32'],
+      datasets:[
+        {label:'Inter Milán',    data:[0.6,0.7,0.5,0.8,0.7,0.75], borderColor:COLORS.SA, tension:.4, pointRadius:2, fill:false},
+        {label:'B. Leverkusen', data:[0.7,0.8,0.6,0.7,0.8,0.81],  borderColor:COLORS.BL, tension:.4, pointRadius:2, fill:false},
+        {label:'Arsenal',       data:[0.8,0.7,0.75,0.9,0.85,0.88],borderColor:COLORS.PL, tension:.4, pointRadius:2, fill:false},
+        {label:'Atlético',      data:[0.6,0.65,0.7,0.8,0.9,0.94], borderColor:COLORS.LL, tension:.4, pointRadius:2, fill:false},
+        {label:'Real Madrid',   data:[1.0,0.9,0.8,0.85,0.88,0.88],borderColor:COLORS.gld, tension:.4, pointRadius:2, fill:false},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{grid:{color:'rgba(200,184,154,.1)'}},
+        y:{title:{display:true,text:'GC/Partido',font:{size:9}},min:0.4,max:1.2,grid:{color:'rgba(200,184,154,.1)'}}
+      },
+      plugins:{legend:{position:'top'}}
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  initOverview();
+  window._init_overview = true;
+});
+</script>
+</body>
+</html>
