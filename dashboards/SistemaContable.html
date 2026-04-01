@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Contable GT · RVC Corporation</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── VARIABLES ───────────────────────────────────────────── */
+:root{
+  --p:#faf7f0;--p2:#f4f0e6;--ink:#1a1410;--rule:#c8b89a;--rule2:#e0d4bc;
+  --acc:#7c3d1e;--acc2:#a0521e;--grn:#2d5a27;--red:#8b1a1a;
+  --mut:#8a7460;--hi:#fff8ee;--sb:#17120d;--sbrule:#2e2218;
+  --sbt:#a89878;--sbm:#5a4a3a;--blu:#1a3a5c;--gld:#c8a030;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--p);color:var(--ink);font-size:14px;}
+
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+.sb{position:fixed;left:0;top:0;width:230px;height:100vh;overflow-y:auto;
+  background:var(--sb);border-right:1px solid var(--sbrule);z-index:300;display:flex;flex-direction:column;}
+.sb::-webkit-scrollbar{width:3px;}.sb::-webkit-scrollbar-thumb{background:var(--sbrule);}
+.sb-brand{padding:20px 16px 14px;border-bottom:1px solid var(--sbrule);}
+.sb-name{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:#d4b896;}
+.sb-sub{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--sbm);letter-spacing:1.5px;margin-top:2px;}
+.sb-sec{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--sbm);
+  text-transform:uppercase;padding:10px 16px 4px;}
+.lnk{display:flex;align-items:center;gap:8px;padding:6px 16px;text-decoration:none;
+  font-size:10.5px;color:var(--sbt);font-family:'IBM Plex Mono',monospace;
+  border-left:2px solid transparent;transition:all .12s;cursor:pointer;border:none;
+  background:none;width:100%;text-align:left;}
+.lnk:hover{color:#e8d4b4;background:rgba(200,184,154,.06);}
+.lnk.on{color:#d4b896;border-left-color:var(--rule);background:rgba(200,184,154,.08);}
+.lnk .i{opacity:.5;font-size:9px;width:12px;flex-shrink:0;}
+.sb-div{height:1px;background:var(--sbrule);margin:5px 16px;}
+.sb-bottom{margin-top:auto;padding:12px 16px;border-top:1px solid var(--sbrule);}
+.sb-info{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--sbm);line-height:1.8;}
+.sb-info strong{color:var(--sbt);}
+
+/* ── MAIN ─────────────────────────────────────────────────── */
+.main{margin-left:230px;min-height:100vh;}
+.pag{display:none;animation:fi .18s ease;}
+.pag.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ── PAGE HEADER ──────────────────────────────────────────── */
+.ph{background:var(--ink);padding:28px 44px 24px;position:relative;overflow:hidden;}
+.ph::before{content:attr(data-g);position:absolute;right:44px;top:50%;transform:translateY(-50%);
+  font-family:'Fraunces',serif;font-size:56px;font-weight:300;
+  color:rgba(200,184,154,.04);letter-spacing:6px;pointer-events:none;}
+.ph-sup{font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:3px;
+  color:rgba(200,184,154,.45);text-transform:uppercase;margin-bottom:7px;}
+.ph-tit{font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:#f0e4cc;line-height:1.2;}
+.ph-met{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:rgba(200,184,154,.35);margin-top:4px;}
+.ph-act{position:absolute;right:44px;bottom:24px;display:flex;gap:8px;}
+
+/* ── SECCIÓN ──────────────────────────────────────────────── */
+.sec{padding:30px 44px;border-bottom:1px solid var(--rule2);}
+.sec-tag{font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-bottom:5px;}
+.sec-tit{font-family:'Fraunces',serif;font-size:18px;font-weight:300;color:var(--acc);margin-bottom:3px;}
+.sec-sub{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--mut);padding-bottom:14px;
+  border-bottom:1px solid var(--rule2);margin-bottom:18px;}
+
+/* ── KPI ──────────────────────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:24px;}
+.kpi{background:var(--hi);border:1px solid var(--rule2);border-top:3px solid var(--acc);padding:13px 14px;}
+.kpi.g{border-top-color:var(--grn);}
+.kpi.b{border-top-color:var(--blu);}
+.kpi.gold{border-top-color:var(--gld);}
+.kpi-l{font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:1.5px;color:var(--mut);
+  text-transform:uppercase;margin-bottom:5px;}
+.kpi-v{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--acc);line-height:1;}
+.kpi-v.g{color:var(--grn);}
+.kpi-v.b{color:var(--blu);}
+.kpi-v.gold{color:var(--gld);}
+.kpi-s{font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--mut);margin-top:3px;}
+
+/* ── TABLAS ───────────────────────────────────────────────── */
+.ct{width:100%;border-collapse:collapse;font-size:12px;}
+.ct th{font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--mut);padding:7px 10px;text-align:left;
+  border-bottom:1px solid var(--rule);background:var(--hi);white-space:nowrap;}
+.ct th.r{text-align:right;}
+.ct td{padding:6px 10px;border-bottom:1px solid var(--rule2);vertical-align:middle;}
+.ct tr:hover td{background:rgba(200,184,154,.07);}
+.ct .num{text-align:right;font-family:'IBM Plex Mono',monospace;}
+.ct .nc{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+.ct .tot td{border-top:2px solid var(--rule)!important;background:var(--hi)!important;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;}
+.ct .tot2 td{background:var(--ink)!important;color:var(--p)!important;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;}
+.nv1 td{background:rgba(124,61,30,.04);font-weight:600;}
+.nv2 td:nth-child(2){padding-left:18px;}
+.nv3 td:nth-child(2){padding-left:34px;font-size:11px;}
+.deb{color:var(--acc);}.hab{color:var(--grn);}
+
+/* ── BADGES ───────────────────────────────────────────────── */
+.bdg{font-family:'IBM Plex Mono',monospace;font-size:7.5px;padding:2px 6px;display:inline-block;}
+.bdg-ok{background:rgba(45,90,39,.12);color:var(--grn);border:1px solid rgba(45,90,39,.2);}
+.bdg-pen{background:rgba(124,61,30,.1);color:var(--acc);border:1px solid rgba(124,61,30,.2);}
+.bdg-venc{background:rgba(139,26,26,.1);color:var(--red);border:1px solid rgba(139,26,26,.2);}
+
+/* ── LINKS ────────────────────────────────────────────────── */
+.cl{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;}
+.cl:hover{color:var(--grn);border-bottom-style:solid;}
+.dl{color:var(--grn);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:10px;cursor:pointer;}
+.dl:hover{text-decoration:underline;}
+
+/* ── COMPROBANTE ──────────────────────────────────────────── */
+.comp{margin-bottom:20px;border:1px solid var(--rule2);}
+.comp-h{background:var(--ink);color:var(--p);padding:10px 16px;
+  display:flex;justify-content:space-between;align-items:center;}
+.comp-n{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c8b89a;}
+.comp-c{font-family:'Fraunces',serif;font-size:13px;font-weight:300;}
+.comp-f{font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(200,184,154,.5);}
+
+/* ── MAYOR CARD ───────────────────────────────────────────── */
+.mc{margin-bottom:24px;border:1px solid var(--rule2);}
+.mc-h{background:var(--ink);color:var(--p);padding:10px 16px;
+  display:flex;justify-content:space-between;align-items:center;}
+
+/* ── FORMULARIOS ──────────────────────────────────────────── */
+.fg{display:grid;gap:12px;}
+.fg2{grid-template-columns:1fr 1fr;}
+.fg3{grid-template-columns:1fr 1fr 1fr;}
+.fld label{font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:1.2px;
+  color:var(--mut);text-transform:uppercase;display:block;margin-bottom:4px;}
+.fld input,.fld select,.fld textarea{width:100%;background:var(--hi);border:1px solid var(--rule2);
+  color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:7px 9px;
+  outline:none;transition:border-color .12s;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--acc);}
+.fld textarea{resize:vertical;min-height:52px;}
+
+/* ── LINEAS PARTIDA ───────────────────────────────────────── */
+.lr{display:grid;grid-template-columns:150px 1fr 110px 110px 26px;
+  gap:7px;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule2);}
+.lr:last-child{border-bottom:none;}
+.lrhdr{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:1px;
+  color:var(--mut);text-transform:uppercase;padding:5px 0 3px;}
+.tot-d{color:var(--acc);font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.tot-h{color:var(--grn);font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.bal-ok{color:var(--grn);font-family:'IBM Plex Mono',monospace;font-size:9px;}
+.bal-err{color:var(--red);font-family:'IBM Plex Mono',monospace;font-size:9px;}
+
+/* ── ALERTAS ──────────────────────────────────────────────── */
+.al{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:9px 12px;border-left:3px solid;margin-bottom:12px;}
+.al-ok{background:rgba(45,90,39,.08);border-color:var(--grn);color:var(--grn);}
+.al-err{background:rgba(139,26,26,.08);border-color:var(--red);color:var(--red);}
+.al-w{background:rgba(200,160,48,.1);border-color:var(--gld);color:#906010;}
+.al-i{background:rgba(26,58,92,.08);border-color:var(--blu);color:var(--blu);}
+
+/* ── TABS ─────────────────────────────────────────────────── */
+.tabs{display:flex;border-bottom:1px solid var(--rule);margin-bottom:18px;}
+.tab{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:1px;padding:8px 16px;
+  cursor:pointer;color:var(--mut);border-bottom:2px solid transparent;
+  background:none;border-top:none;border-left:none;border-right:none;
+  text-transform:uppercase;transition:all .12s;}
+.tab:hover{color:var(--ink);}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc);}
+
+/* ── BTNS ─────────────────────────────────────────────────── */
+.btn{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.8px;
+  padding:7px 15px;border:1px solid;cursor:pointer;transition:all .12s;
+  text-transform:uppercase;display:inline-block;}
+.btn-p{background:var(--acc);color:var(--p);border-color:var(--acc);}
+.btn-p:hover{background:var(--acc2);}
+.btn-o{background:transparent;color:var(--sbt);border-color:var(--sbrule);}
+.btn-o:hover{background:rgba(200,184,154,.08);color:#e8d4b4;}
+.btn-s{padding:4px 11px;font-size:8.5px;}
+
+/* ── LOADING ──────────────────────────────────────────────── */
+.loading{text-align:center;padding:60px;font-family:'IBM Plex Mono',monospace;
+  font-size:10px;color:var(--mut);letter-spacing:2px;}
+.loading::after{content:' .';animation:dots 1.5s infinite;}
+@keyframes dots{0%,20%{color:transparent}40%{color:var(--acc)}}
+
+/* ── NOTA ─────────────────────────────────────────────────── */
+.nota{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--mut);
+  padding:9px 13px;border:1px solid var(--rule2);background:var(--hi);
+  line-height:1.6;margin-bottom:14px;}
+.nota strong{color:var(--acc);}
+
+/* ── CIERRE PASOS ─────────────────────────────────────────── */
+.paso{display:flex;gap:12px;padding:14px;border:1px solid var(--rule2);
+  background:var(--hi);margin-bottom:10px;}
+.paso-n{width:28px;height:28px;background:var(--ink);color:#d4b896;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;}
+.paso-n.dn{background:var(--grn);}
+.paso-n.av{background:var(--acc);}
+.paso h4{font-family:'Fraunces',serif;font-size:13px;font-weight:400;margin-bottom:3px;}
+.paso p{font-size:11px;color:var(--mut);line-height:1.5;}
+.paso pre{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--ink);
+  color:#c8b89a;padding:8px 12px;margin-top:6px;border-left:3px solid var(--acc);}
+.paso-act{margin-top:6px;display:flex;gap:7px;flex-wrap:wrap;}
+
+/* ── UTILS ────────────────────────────────────────────────── */
+.fl{display:flex;align-items:center;}
+.fb{display:flex;justify-content:space-between;align-items:center;}
+.g8{gap:8px;}.g12{gap:12px;}
+.mb8{margin-bottom:8px;}.mb16{margin-bottom:16px;}.mb20{margin-bottom:20px;}
+.mt12{margin-top:12px;}.mt18{margin-top:18px;}
+.muted{color:var(--mut);font-size:11px;}
+.sep{height:1px;background:var(--rule2);margin:18px 0;}
+.empty{text-align:center;padding:44px 20px;color:var(--mut);}
+.empty .ico{font-size:28px;display:block;margin-bottom:10px;opacity:.25;}
+.empty p{font-family:'IBM Plex Mono',monospace;font-size:9.5px;}
+
+/* ── TOAST ────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#d4b896;
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:9px 16px;
+  border-left:3px solid var(--acc);display:none;z-index:999;max-width:300px;line-height:1.5;}
+
+/* ── MODO OFFLINE ─────────────────────────────────────────── */
+.offline-banner{background:rgba(200,160,48,.15);border:1px solid var(--gld);
+  color:#906010;font-family:'IBM Plex Mono',monospace;font-size:9px;
+  padding:8px 14px;margin-bottom:16px;letter-spacing:.5px;}
+
+/* ── PRINT ────────────────────────────────────────────────── */
+.print-btn{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#d4b896;
+  border:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;
+  font-size:9px;letter-spacing:1px;padding:8px 16px;cursor:pointer;
+  transition:.15s;z-index:200;}
+.print-btn:hover{background:var(--acc);}
+@media print{.sb,.print-btn,#toast{display:none!important;}.main{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ════════════════ -->
+<nav class="sb">
+  <div class="sb-brand">
+    <div class="sb-name">Sistema Contable GT</div>
+    <div class="sb-sub">RVC CORPORATION · v4.0</div>
+  </div>
+  <div class="sb-sec">Consultas</div>
+  <button class="lnk on" onclick="ir('balance')"><span class="i">≡</span>Balance Comprobación</button>
+  <button class="lnk" onclick="ir('mayor')"><span class="i">◇</span>Libro Mayor</button>
+  <button class="lnk" onclick="ir('diario')"><span class="i">◆</span>Libro Diario</button>
+  <div class="sb-sec">Operaciones</div>
+  <button class="lnk" onclick="ir('partida')"><span class="i">✦</span>Nueva Partida</button>
+  <button class="lnk" onclick="ir('catalogo')"><span class="i">☰</span>Catálogo de Cuentas</button>
+  <div class="sb-sec">Cierre y Fiscal</div>
+  <button class="lnk" onclick="ir('cierre')"><span class="i">⊕</span>Cierre de Ejercicio</button>
+  <button class="lnk" onclick="ir('impuestos')"><span class="i">◉</span>IVA · ISR · SAT</button>
+  <div class="sb-sec">Reportes</div>
+  <button class="lnk" onclick="ir('estados')"><span class="i">▣</span>Estados Financieros</button>
+  <div class="sb-div"></div>
+  <div class="sb-bottom">
+    <div class="sb-info">Empresa:<strong id="sbEmp">Cargando…</strong></div>
+    <div class="sb-info" style="margin-top:4px">NIT:<strong id="sbNIT">—</strong></div>
+    <div class="sb-info" style="margin-top:4px">Generado:<strong id="sbGen">—</strong></div>
+    <div class="sb-info" style="margin-top:8px;font-size:7px;color:var(--sbm)">
+      ← Datos desde Access<br>Call ActualizarHTML
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN ════════════════════ -->
+<main class="main">
+
+<!-- BALANCE COMPROBACIÓN -->
+<div id="pag-balance" class="pag on">
+  <div class="ph" data-g="BALANCE">
+    <div class="ph-sup">Resumen Intermedio · Verificación de Saldos · NIIF / SAT</div>
+    <div class="ph-tit" id="ph-bal-tit">Balance de Comprobación</div>
+    <div class="ph-met" id="ph-bal-met">—</div>
+    <div class="ph-act"><button class="btn btn-o btn-s" onclick="window.print()">⎙ Imprimir</button></div>
+  </div>
+  <div class="sec">
+    <div class="kpis" id="bal-kpis">
+      <div class="kpi"><div class="kpi-l">Total Debe</div><div class="kpi-v" id="k-debe">—</div></div>
+      <div class="kpi g"><div class="kpi-l">Total Haber</div><div class="kpi-v g" id="k-haber">—</div></div>
+      <div class="kpi b"><div class="kpi-l">Cuentas</div><div class="kpi-v b" id="k-ctas">—</div></div>
+      <div class="kpi" id="kpi-cuadre"><div class="kpi-l">Cuadre</div><div class="kpi-v" id="k-cuadre">—</div></div>
+    </div>
+    <div id="bal-tabla"><div class="loading">Cargando datos desde Access</div></div>
+  </div>
+</div>
+
+<!-- LIBRO MAYOR -->
+<div id="pag-mayor" class="pag">
+  <div class="ph" data-g="MAYOR">
+    <div class="ph-sup">Libro Centralizador · Clasificación por Cuenta</div>
+    <div class="ph-tit">Libro Mayor</div>
+    <div class="ph-met">Saldo acumulado por movimiento · hipervínculo al Diario</div>
+    <div class="ph-act"><button class="btn btn-o btn-s" onclick="window.print()">⎙</button></div>
+  </div>
+  <div class="sec">
+    <div class="fl g12 mb16">
+      <div class="fld"><label>Cuenta</label><select id="may-cta" style="width:260px"><option value="">Todas</option></select></div>
+      <div style="align-self:flex-end"><button class="btn btn-p btn-s" onclick="renderMayor()">Ver Mayor</button></div>
+    </div>
+    <div id="may-cont"><div class="loading">Cargando</div></div>
+  </div>
+</div>
+
+<!-- LIBRO DIARIO -->
+<div id="pag-diario" class="pag">
+  <div class="ph" data-g="DIARIO">
+    <div class="ph-sup">Libro de Primera Entrada · Código Comercio 2-70</div>
+    <div class="ph-tit">Libro Diario</div>
+    <div class="ph-met">Comprobantes ordenados cronológicamente · hipervínculo al Mayor</div>
+    <div class="ph-act"><button class="btn btn-o btn-s" onclick="window.print()">⎙</button></div>
+  </div>
+  <div class="sec">
+    <div class="fl g12 mb16">
+      <div class="fld"><label>Tipo</label><select id="d-tip" style="width:160px"><option value="">Todos</option><option>APERTURA</option><option>COMPRA</option><option>VENTA</option><option>COSTO</option><option>PLANILLA</option><option>GASTOS</option><option>COBRO</option><option>AJUSTE</option><option>CIERRE</option></select></div>
+      <div class="fld"><label>Buscar doc.</label><input id="d-bus" type="text" style="width:160px" placeholder="N° comprobante…"></div>
+      <div style="align-self:flex-end"><button class="btn btn-p btn-s" onclick="renderDiario()">Filtrar</button></div>
+    </div>
+    <div id="diario-cont"><div class="loading">Cargando</div></div>
+  </div>
+</div>
+
+<!-- NUEVA PARTIDA -->
+<div id="pag-partida" class="pag">
+  <div class="ph" data-g="PARTIDA">
+    <div class="ph-sup">Registro de Asientos · Debe = Haber · Código Comercio 2-70</div>
+    <div class="ph-tit">Nueva Partida Contable</div>
+    <div class="ph-met">Formulario — los datos se guardan en memoria hasta exportar a Access</div>
+  </div>
+  <div class="sec">
+    <div class="nota"><strong>Flujo:</strong> Complete el formulario → Guardar partida (en memoria) → En Access ejecutar <code>Call ActualizarHTML</code> para sincronizar. Para ingresar directamente en Access use <code>NuevaPartida()</code> + <code>AgregarLinea()</code>.</div>
+    <div class="sec-tit mb8">Encabezado del Comprobante</div>
+    <div class="fg fg3 mb20">
+      <div class="fld"><label>N° Comprobante</label><input id="f-doc" placeholder="COMP-0011"></div>
+      <div class="fld"><label>Fecha</label><input type="date" id="f-fec"></div>
+      <div class="fld"><label>Tipo de Partida</label>
+        <select id="f-tip"><option>DIARIO</option><option>COMPRA</option><option>VENTA</option>
+        <option>BANCO</option><option>PLANILLA</option><option>AJUSTE</option>
+        <option>CIERRE</option><option>APERTURA</option></select></div>
+      <div class="fld"><label>N° Factura / FEL</label><input id="f-fac" placeholder="FEL-00001"></div>
+      <div class="fld"><label>NIT</label><input id="f-nit" placeholder="1234567-8"></div>
+      <div class="fld"><label>Período (aaaa-mm)</label><input type="month" id="f-per"></div>
+    </div>
+    <div class="fg mb20"><div class="fld"><label>Concepto</label><textarea id="f-con"></textarea></div></div>
+    <div class="fb mb14">
+      <div>
+        <div class="sec-tit">Líneas del Asiento</div>
+        <div class="muted" style="margin-top:2px">Debe = Haber para cuadrar</div>
+      </div>
+      <div class="fl g8">
+        <button class="btn btn-o btn-s" onclick="tpl('compra')">Plantilla: Compra</button>
+        <button class="btn btn-o btn-s" onclick="tpl('venta')">Plantilla: Venta</button>
+        <button class="btn btn-o btn-s" onclick="tpl('planilla')">Plantilla: Planilla</button>
+        <button class="btn btn-o btn-s" onclick="addLin()">+ Línea</button>
+      </div>
+    </div>
+    <div class="lr lrhdr"><span>Cuenta</span><span>Nombre</span><span>Debe (Q)</span><span>Haber (Q)</span><span></span></div>
+    <div id="lins"></div>
+    <div style="border-top:2px solid var(--rule);margin-top:10px;padding-top:10px;">
+      <div class="fb">
+        <div><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--mut);letter-spacing:1px;text-transform:uppercase">DEBE:</span><span class="tot-d" id="tot-d" style="margin-left:8px">Q 0.00</span></div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--mut);letter-spacing:1px;text-transform:uppercase">HABER:</span><span class="tot-h" id="tot-h" style="margin-left:8px">Q 0.00</span></div>
+        <div id="bal-st" class="bal-ok">✓ Cuadrado</div>
+      </div>
+    </div>
+    <div class="mt18 fl g8">
+      <button class="btn btn-p" onclick="guardarP()">✦ Guardar Partida</button>
+      <button class="btn btn-o" onclick="limpiarP()">Limpiar</button>
+    </div>
+    <div id="f-alert" class="mt12"></div>
+    <div class="mt18" id="partidas-guardadas-sec" style="display:none">
+      <div class="sep"></div>
+      <div class="sec-tag">Partidas guardadas en esta sesión</div>
+      <div id="partidas-guardadas"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATÁLOGO -->
+<div id="pag-catalogo" class="pag">
+  <div class="ph" data-g="CATALOGO"><div class="ph-sup">Plan Contable · NIIF · SAT Guatemala</div>
+    <div class="ph-tit">Catálogo de Cuentas</div>
+    <div class="ph-met">50 cuentas NIIF/SAT — datos desde tbl_CatalogoCuentas</div>
+  </div>
+  <div class="sec">
+    <div class="fl g12 mb16">
+      <div class="fld" style="flex:1"><label>Buscar</label><input id="cat-b" placeholder="número o nombre…" oninput="renderCat()"></div>
+      <div class="fld"><label>Tipo</label><select id="cat-t" onchange="renderCat()"><option value="">Todos</option><option value="1">Activo</option><option value="2">Pasivo</option><option value="3">Patrimonio</option><option value="4">Ingresos</option><option value="5">Costos y Gastos</option></select></div>
+    </div>
+    <table class="ct"><thead><tr><th>Código</th><th>Nombre</th><th>Tipo</th><th>Naturaleza</th><th>Nivel</th></tr></thead><tbody id="cat-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div id="pag-cierre" class="pag">
+  <div class="ph" data-g="CIERRE">
+    <div class="ph-sup">Cierre Fiscal · SAT Guatemala · Decreto 6-91 / 10-2012</div>
+    <div class="ph-tit">Cierre de Ejercicio Contable</div>
+    <div class="ph-met">5 pasos secuenciales · genera partida de cierre y apertura automáticamente</div>
+  </div>
+  <div class="sec">
+    <div class="nota"><strong>En Access ejecutar:</strong> <code>Call CierreFiscal(2024)</code> — genera la partida de cierre automática y registra en tbl_CierresFiscales.</div>
+    <div class="paso"><div class="paso-n dn">1</div><div style="flex:1"><h4>Verificar cuadre del Balance de Comprobación</h4><p>Confirmar que Debe = Haber. Corrija con partidas de ajuste antes de continuar.</p><div id="p1r"></div><div class="paso-act"><button class="btn btn-o btn-s" onclick="checkCuadre()">Verificar cuadre</button></div></div></div>
+    <div class="paso"><div class="paso-n" id="pn2">2</div><div style="flex:1"><h4>Registrar partidas de ajuste</h4><p>Depreciaciones (ley GT), provisiones para indemnizaciones, diferidos.</p>
+      <pre>Mob. y equipo:     20% anual   (5 años)
+Eq. de cómputo:   33.33% anual (3 años)
+Vehículos:        20% anual   (5 años)
+Edificios:         5% anual   (20 años)</pre>
+      <div class="paso-act"><button class="btn btn-o btn-s" onclick="ir('partida');document.getElementById('f-tip').value='AJUSTE'">Crear ajuste</button></div>
+    </div></div>
+    <div class="paso"><div class="paso-n" id="pn3">3</div><div style="flex:1"><h4>Calcular resultado del ejercicio</h4><p>Ingresos − Egresos − Costos = Utilidad o Pérdida del período.</p><div id="p3r"></div><div class="paso-act"><button class="btn btn-o btn-s" onclick="calcRes()">Calcular resultado</button></div></div></div>
+    <div class="paso"><div class="paso-n" id="pn4">4</div><div style="flex:1"><h4>Generar partida de cierre (Access)</h4><p>Saldar cuentas de ingreso/egreso contra cuenta 3103 Resultado del Periodo.</p><pre>En Access: Call CierreFiscal(2024)</pre></div></div>
+    <div class="paso"><div class="paso-n" id="pn5">5</div><div style="flex:1"><h4>Generar partida de apertura (Access)</h4><p>Crear comprobante PA-AAAA-001 con saldos de activo, pasivo y capital.</p><pre>En Access: Call ActualizarHTML (actualiza el reporte)</pre></div></div>
+    <div class="sep"></div>
+    <div class="sec-tag">Historial de cierres registrados</div>
+    <div id="cierre-hist"></div>
+  </div>
+</div>
+
+<!-- IMPUESTOS -->
+<div id="pag-impuestos" class="pag">
+  <div class="ph" data-g="IMPUESTOS">
+    <div class="ph-sup">SAT Guatemala · IVA Dcto. 27-92 · ISR Dcto. 10-2012</div>
+    <div class="ph-tit">Control de Impuestos — IVA · ISR</div>
+    <div class="ph-met">Datos desde tbl_Impuestos · Actualizar: Call ActualizarHTML en Access</div>
+  </div>
+  <div class="sec">
+    <div class="tabs">
+      <button class="tab on" onclick="tabI('iva',this)">IVA Mensual</button>
+      <button class="tab" onclick="tabI('isr',this)">ISR Trimestral</button>
+      <button class="tab" onclick="tabI('cal',this)">Calendario SAT</button>
+    </div>
+    <div id="imp-iva"></div>
+    <div id="imp-isr" style="display:none"></div>
+    <div id="imp-cal" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ESTADOS FINANCIEROS -->
+<div id="pag-estados" class="pag">
+  <div class="ph" data-g="ESTADOS">
+    <div class="ph-sup">Estados Financieros · NIIF · SAT Guatemala</div>
+    <div class="ph-tit">Estados Financieros</div>
+    <div class="ph-met">Balance General · Estado de Resultados · datos desde Access</div>
+    <div class="ph-act"><button class="btn btn-o btn-s" onclick="window.print()">⎙ PDF</button></div>
+  </div>
+  <div class="sec">
+    <div class="tabs">
+      <button class="tab on" onclick="tabEF('bg',this)">Balance General</button>
+      <button class="tab" onclick="tabEF('er',this)">Estado de Resultados</button>
+    </div>
+    <div id="ef-bg"></div>
+    <div id="ef-er" style="display:none"></div>
+  </div>
+</div>
+
+</main>
+
+<div id="toast"></div>
+<button class="print-btn" onclick="window.print()">⎙ PDF</button>
+
+<!-- ════════════════════════ SCRIPT ════════════════════════════ -->
+<script>
+// ─────────────────────────────────────────────────────────────
+// DATOS GLOBALES
+// Los datos vienen de datos.json (exportado desde Access)
+// Si no existe el JSON, se usan datos demo embebidos
+// ─────────────────────────────────────────────────────────────
+let DB = null;           // datos cargados del JSON
+let sesion = [];         // partidas nuevas de la sesión (no en Access aun)
+let linC = 0;            // contador de lineas del formulario
+
+const Q = n => 'Q ' + (+(n)||0).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2});
+const N = n => (+(n)||0).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2});
+const hoy = () => new Date().toISOString().split('T')[0];
+const mes  = () => new Date().toISOString().slice(0,7);
+
+function toast(m, t='ok'){
+  const el = document.getElementById('toast');
+  el.textContent = m;
+  el.style.borderLeftColor = t==='err'?'var(--red)':t==='w'?'var(--gld)':'var(--acc)';
+  el.style.display = 'block';
+  setTimeout(()=>el.style.display='none', 3400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// CARGA DE DATOS: intenta datos.json, usa demo si falla
+// ─────────────────────────────────────────────────────────────
+async function cargarDatos(){
+  try {
+    const r = await fetch('datos.json?v=' + Date.now());
+    if(!r.ok) throw new Error('no encontrado');
+    DB = await r.json();
+    document.getElementById('sbGen').textContent = DB.meta?.generado?.split(' ')[0] || '—';
+    console.log('datos.json cargado desde Access');
+  } catch(e) {
+    console.warn('datos.json no encontrado — usando datos demo embebidos');
+    DB = datosDemo();
+    // Mostrar banner offline en todas las páginas
+    document.querySelectorAll('.sec').forEach(s => {
+      if(!s.querySelector('.offline-banner')){
+        const b = document.createElement('div');
+        b.className = 'offline-banner';
+        b.textContent = '⚠ Modo demo — datos embebidos. En Access ejecutar: Call ActualizarHTML';
+        s.prepend(b);
+      }
+    });
+  }
+
+  // Actualizar sidebar
+  const m = DB.meta || {};
+  document.getElementById('sbEmp').textContent = m.empresa || 'Demo';
+  document.getElementById('sbNIT').textContent = m.nit || '—';
+
+  // Inicializar todo
+  renderBalance();
+  initMayor();
+  initPartida();
+  renderCat();
+  renderImpuestos();
+  renderCierres();
+  renderEstados();
+}
+
+// ─────────────────────────────────────────────────────────────
+// DATOS DEMO EMBEBIDOS (activados cuando no hay datos.json)
+// ─────────────────────────────────────────────────────────────
+function datosDemo(){
+  return {
+    meta:{empresa:'Inversiones Comerciales, S.A.',nit:'5847291-3',ejercicio:2024,
+      generado:'2024-01-31 14:00:00',version:'4.0'},
+    kpis:{total_debe:785214.62,total_haber:785214.62,num_partidas:10,
+      cuadra:true,ingresos:180000,egresos:172540.33,resultado:7459.67},
+    catalogo:[
+      {codigo:'1101',nombre:'Caja',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',nivel:3,acepta:1},
+      {codigo:'1102',nombre:'Bancos',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',nivel:3,acepta:1},
+      {codigo:'1103',nombre:'Cuentas por Cobrar Clientes',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',nivel:3,acepta:1},
+      {codigo:'1105',nombre:'Inventario de Mercancias',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',nivel:3,acepta:1},
+      {codigo:'1106',nombre:'IVA Credito Fiscal',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',nivel:3,acepta:1},
+      {codigo:'1203',nombre:'Mobiliario y Equipo',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo No Corriente',nivel:3,acepta:1},
+      {codigo:'1205',nombre:'Equipo de Computo',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo No Corriente',nivel:3,acepta:1},
+      {codigo:'1290',nombre:'Depreciacion Acumulada',tipo:'1',naturaleza:'ACREEDORA',grupo:'Activo No Corriente',nivel:3,acepta:1},
+      {codigo:'2101',nombre:'Cuentas por Pagar Proveedores',tipo:'2',naturaleza:'ACREEDORA',grupo:'Pasivo Corriente',nivel:3,acepta:1},
+      {codigo:'2103',nombre:'IVA Debito Fiscal',tipo:'2',naturaleza:'ACREEDORA',grupo:'Pasivo Corriente',nivel:3,acepta:1},
+      {codigo:'2104',nombre:'ISR por Pagar',tipo:'2',naturaleza:'ACREEDORA',grupo:'Pasivo Corriente',nivel:3,acepta:1},
+      {codigo:'2105',nombre:'Sueldos y Salarios por Pagar',tipo:'2',naturaleza:'ACREEDORA',grupo:'Pasivo Corriente',nivel:3,acepta:1},
+      {codigo:'2106',nombre:'Cuota IGSS por Pagar',tipo:'2',naturaleza:'ACREEDORA',grupo:'Pasivo Corriente',nivel:3,acepta:1},
+      {codigo:'2201',nombre:'Prestamos Bancarios LP',tipo:'2',naturaleza:'ACREEDORA',grupo:'Pasivo No Corriente',nivel:3,acepta:1},
+      {codigo:'3101',nombre:'Capital Pagado',tipo:'3',naturaleza:'ACREEDORA',grupo:'Patrimonio',nivel:2,acepta:1},
+      {codigo:'3103',nombre:'Resultado del Periodo',tipo:'3',naturaleza:'ACREEDORA',grupo:'Patrimonio',nivel:2,acepta:1},
+      {codigo:'4101',nombre:'Ventas',tipo:'4',naturaleza:'ACREEDORA',grupo:'Ingresos Operativos',nivel:2,acepta:1},
+      {codigo:'4102',nombre:'Ingresos por Servicios',tipo:'4',naturaleza:'ACREEDORA',grupo:'Ingresos Operativos',nivel:2,acepta:1},
+      {codigo:'5101',nombre:'Costo de Ventas',tipo:'5',naturaleza:'DEUDORA',grupo:'Costo de Ventas',nivel:2,acepta:1},
+      {codigo:'5201',nombre:'Sueldos y Salarios',tipo:'5',naturaleza:'DEUDORA',grupo:'Gastos de Operacion',nivel:2,acepta:1},
+      {codigo:'5202',nombre:'Cuota Patronal IGSS',tipo:'5',naturaleza:'DEUDORA',grupo:'Gastos de Operacion',nivel:2,acepta:1},
+      {codigo:'5203',nombre:'Alquiler de Inmuebles',tipo:'5',naturaleza:'DEUDORA',grupo:'Gastos de Operacion',nivel:2,acepta:1},
+      {codigo:'5204',nombre:'Energia Electrica',tipo:'5',naturaleza:'DEUDORA',grupo:'Gastos de Operacion',nivel:2,acepta:1},
+      {codigo:'5205',nombre:'Telefono e Internet',tipo:'5',naturaleza:'DEUDORA',grupo:'Gastos de Operacion',nivel:2,acepta:1},
+      {codigo:'5206',nombre:'Papeleria y Utiles',tipo:'5',naturaleza:'DEUDORA',grupo:'Gastos de Operacion',nivel:2,acepta:1},
+      {codigo:'5208',nombre:'Depreciaciones del Periodo',tipo:'5',naturaleza:'DEUDORA',grupo:'Depreciacion',nivel:2,acepta:1},
+    ],
+    balance_comprobacion:[
+      {cuenta:'1101',nombre:'Caja',tipo:'1',grupo:'Activo Corriente',debe:117200,haber:0,saldo:117200},
+      {cuenta:'1102',nombre:'Bancos',tipo:'1',grupo:'Activo Corriente',debe:180000,haber:22800,saldo:157200},
+      {cuenta:'1103',nombre:'Cuentas por Cobrar Clientes',tipo:'1',grupo:'Activo Corriente',debe:134400,haber:80000,saldo:54400},
+      {cuenta:'1105',nombre:'Inventario de Mercancias',tipo:'1',grupo:'Activo Corriente',debe:205714.29,haber:117000,saldo:88714.29},
+      {cuenta:'1106',nombre:'IVA Credito Fiscal',tipo:'1',grupo:'Activo Corriente',debe:10285.71,haber:0,saldo:10285.71},
+      {cuenta:'1203',nombre:'Mobiliario y Equipo',tipo:'1',grupo:'Activo No Corriente',debe:45000,haber:0,saldo:45000},
+      {cuenta:'1205',nombre:'Equipo de Computo',tipo:'1',grupo:'Activo No Corriente',debe:28000,haber:0,saldo:28000},
+      {cuenta:'1290',nombre:'Depreciacion Acumulada',tipo:'1',grupo:'Activo No Corriente',debe:0,haber:1458.33,saldo:-1458.33},
+      {cuenta:'2101',nombre:'Cuentas por Pagar Proveedores',tipo:'2',grupo:'Pasivo Corriente',debe:0,haber:96000,saldo:-96000},
+      {cuenta:'2103',nombre:'IVA Debito Fiscal',tipo:'2',grupo:'Pasivo Corriente',debe:0,haber:21600,saldo:-21600},
+      {cuenta:'2104',nombre:'ISR por Pagar',tipo:'2',grupo:'Pasivo Corriente',debe:0,haber:4800,saldo:-4800},
+      {cuenta:'2105',nombre:'Sueldos y Salarios por Pagar',tipo:'2',grupo:'Pasivo Corriente',debe:0,haber:43200,saldo:-43200},
+      {cuenta:'2106',nombre:'Cuota IGSS por Pagar',tipo:'2',grupo:'Pasivo Corriente',debe:0,haber:6082,saldo:-6082},
+      {cuenta:'2201',nombre:'Prestamos Bancarios LP',tipo:'2',grupo:'Pasivo No Corriente',debe:0,haber:113000,saldo:-113000},
+      {cuenta:'3101',nombre:'Capital Pagado',tipo:'3',grupo:'Patrimonio',debe:0,haber:310000,saldo:-310000},
+      {cuenta:'4101',nombre:'Ventas',tipo:'4',grupo:'Ingresos Operativos',debe:0,haber:180000,saldo:-180000},
+      {cuenta:'5101',nombre:'Costo de Ventas',tipo:'5',grupo:'Costo de Ventas',debe:117000,haber:0,saldo:117000},
+      {cuenta:'5201',nombre:'Sueldos y Salarios',tipo:'5',grupo:'Gastos de Operacion',debe:48000,haber:0,saldo:48000},
+      {cuenta:'5202',nombre:'Cuota Patronal IGSS',tipo:'5',grupo:'Gastos de Operacion',debe:6082,haber:0,saldo:6082},
+      {cuenta:'5203',nombre:'Alquiler de Inmuebles',tipo:'5',grupo:'Gastos de Operacion',debe:15000,haber:0,saldo:15000},
+      {cuenta:'5204',nombre:'Energia Electrica',tipo:'5',grupo:'Gastos de Operacion',debe:3800,haber:0,saldo:3800},
+      {cuenta:'5205',nombre:'Telefono e Internet',tipo:'5',grupo:'Gastos de Operacion',debe:2200,haber:0,saldo:2200},
+      {cuenta:'5206',nombre:'Papeleria y Utiles',tipo:'5',grupo:'Gastos de Operacion',debe:1800,haber:0,saldo:1800},
+      {cuenta:'5208',nombre:'Depreciaciones del Periodo',tipo:'5',grupo:'Depreciacion',debe:1458.33,haber:0,saldo:1458.33},
+    ],
+    libro_mayor:{
+      '1101':{nombre:'Caja',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',movimientos:[
+        {fecha:'2024-01-02',doc:'PA-2024-001',tipo:'APERTURA',concepto:'Asiento de apertura ejercicio 2024',debe:50000,haber:0},
+        {fecha:'2024-01-20',doc:'COMP-0004',tipo:'VENTA',concepto:'Venta mercancias contado',debe:67200,haber:0},
+      ]},
+      '1102':{nombre:'Bancos',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',movimientos:[
+        {fecha:'2024-01-02',doc:'PA-2024-001',tipo:'APERTURA',concepto:'Asiento de apertura ejercicio 2024',debe:180000,haber:0},
+        {fecha:'2024-01-31',doc:'COMP-0006',tipo:'GASTOS',concepto:'Gastos generales enero',debe:0,haber:22800},
+        {fecha:'2024-02-05',doc:'COMP-0007',tipo:'COBRO',concepto:'Cobro parcial CxC Distribuidora El Exito',debe:80000,haber:0},
+      ]},
+      '1103':{nombre:'Cuentas por Cobrar Clientes',tipo:'1',naturaleza:'DEUDORA',grupo:'Activo Corriente',movimientos:[
+        {fecha:'2024-01-15',doc:'COMP-0002',tipo:'VENTA',concepto:'Venta mercancias credito Distribuidora El Exito',debe:134400,haber:0},
+        {fecha:'2024-02-05',doc:'COMP-0007',tipo:'COBRO',concepto:'Cobro parcial CxC Distribuidora El Exito',debe:0,haber:80000},
+      ]},
+      '4101':{nombre:'Ventas',tipo:'4',naturaleza:'ACREEDORA',grupo:'Ingresos Operativos',movimientos:[
+        {fecha:'2024-01-15',doc:'COMP-0002',tipo:'VENTA',concepto:'Venta credito Distribuidora El Exito',debe:0,haber:120000},
+        {fecha:'2024-01-20',doc:'COMP-0004',tipo:'VENTA',concepto:'Venta contado Consumidor Final',debe:0,haber:60000},
+      ]},
+      '5101':{nombre:'Costo de Ventas',tipo:'5',naturaleza:'DEUDORA',grupo:'Costo de Ventas',movimientos:[
+        {fecha:'2024-01-15',doc:'COMP-0003',tipo:'COSTO',concepto:'Costo de ventas credito',debe:75000,haber:0},
+        {fecha:'2024-01-20',doc:'COMP-0005',tipo:'COSTO',concepto:'Costo de ventas contado',debe:42000,haber:0},
+      ]},
+    },
+    libro_diario:[
+      {id:1,doc:'PA-2024-001',fecha:'2024-01-02',tipo:'APERTURA',concepto:'Asiento de apertura del ejercicio fiscal 2024',total_debe:423000,total_haber:423000,cuadra:1,lineas:[
+        {orden:1,cuenta:'1101',nombre:'Caja',debe:50000,haber:0},
+        {orden:2,cuenta:'1102',nombre:'Bancos',debe:180000,haber:0},
+        {orden:3,cuenta:'1105',nombre:'Inventario de Mercancias',debe:120000,haber:0},
+        {orden:4,cuenta:'1203',nombre:'Mobiliario y Equipo',debe:45000,haber:0},
+        {orden:5,cuenta:'1205',nombre:'Equipo de Computo',debe:28000,haber:0},
+        {orden:6,cuenta:'2201',nombre:'Prestamos Bancarios LP',debe:0,haber:113000},
+        {orden:7,cuenta:'3101',nombre:'Capital Pagado',debe:0,haber:310000},
+      ]},
+      {id:2,doc:'COMP-0001',fecha:'2024-01-08',tipo:'COMPRA',concepto:'Compra mercancias — Distribuidora Nacional Fact.0542',total_debe:96000,total_haber:96000,cuadra:1,lineas:[
+        {orden:1,cuenta:'1105',nombre:'Inventario de Mercancias',debe:85714.29,haber:0},
+        {orden:2,cuenta:'1106',nombre:'IVA Credito Fiscal',debe:10285.71,haber:0},
+        {orden:3,cuenta:'2101',nombre:'Cuentas por Pagar Proveedores',debe:0,haber:96000},
+      ]},
+      {id:3,doc:'COMP-0002',fecha:'2024-01-15',tipo:'VENTA',concepto:'Venta mercancias credito — Distribuidora El Exito Fact.FEL-00891',total_debe:134400,total_haber:134400,cuadra:1,lineas:[
+        {orden:1,cuenta:'1103',nombre:'Cuentas por Cobrar Clientes',debe:134400,haber:0},
+        {orden:2,cuenta:'4101',nombre:'Ventas',debe:0,haber:120000},
+        {orden:3,cuenta:'2103',nombre:'IVA Debito Fiscal',debe:0,haber:14400},
+      ]},
+      {id:4,doc:'COMP-0003',fecha:'2024-01-15',tipo:'COSTO',concepto:'Costo de ventas por mercancias entregadas COMP-0002',total_debe:75000,total_haber:75000,cuadra:1,lineas:[
+        {orden:1,cuenta:'5101',nombre:'Costo de Ventas',debe:75000,haber:0},
+        {orden:2,cuenta:'1105',nombre:'Inventario de Mercancias',debe:0,haber:75000},
+      ]},
+      {id:5,doc:'COMP-0004',fecha:'2024-01-20',tipo:'VENTA',concepto:'Venta mercancias contado — Consumidor Final Fact.FEL-00892',total_debe:67200,total_haber:67200,cuadra:1,lineas:[
+        {orden:1,cuenta:'1101',nombre:'Caja',debe:67200,haber:0},
+        {orden:2,cuenta:'4101',nombre:'Ventas',debe:0,haber:60000},
+        {orden:3,cuenta:'2103',nombre:'IVA Debito Fiscal',debe:0,haber:7200},
+      ]},
+      {id:6,doc:'PLAN-2024-01',fecha:'2024-01-31',tipo:'PLANILLA',concepto:'Planilla de sueldos enero 2024 — 8 empleados',total_debe:54082,total_haber:54082,cuadra:1,lineas:[
+        {orden:1,cuenta:'5201',nombre:'Sueldos y Salarios',debe:48000,haber:0},
+        {orden:2,cuenta:'5202',nombre:'Cuota Patronal IGSS',debe:6082,haber:0},
+        {orden:3,cuenta:'2105',nombre:'Sueldos y Salarios por Pagar',debe:0,haber:43200},
+        {orden:4,cuenta:'2106',nombre:'Cuota IGSS por Pagar',debe:0,haber:6082},
+        {orden:5,cuenta:'2104',nombre:'ISR por Pagar',debe:0,haber:4800},
+      ]},
+      {id:7,doc:'COMP-0006',fecha:'2024-01-31',tipo:'GASTOS',concepto:'Gastos generales enero — alquiler, servicios, papeleria',total_debe:22800,total_haber:22800,cuadra:1,lineas:[
+        {orden:1,cuenta:'5203',nombre:'Alquiler de Inmuebles',debe:15000,haber:0},
+        {orden:2,cuenta:'5204',nombre:'Energia Electrica',debe:3800,haber:0},
+        {orden:3,cuenta:'5205',nombre:'Telefono e Internet',debe:2200,haber:0},
+        {orden:4,cuenta:'5206',nombre:'Papeleria y Utiles',debe:1800,haber:0},
+        {orden:5,cuenta:'1102',nombre:'Bancos',debe:0,haber:22800},
+      ]},
+      {id:8,doc:'COMP-0007',fecha:'2024-02-05',tipo:'COBRO',concepto:'Cobro parcial CxC — Distribuidora El Exito Recibo-001',total_debe:80000,total_haber:80000,cuadra:1,lineas:[
+        {orden:1,cuenta:'1102',nombre:'Bancos',debe:80000,haber:0},
+        {orden:2,cuenta:'1103',nombre:'Cuentas por Cobrar Clientes',debe:0,haber:80000},
+      ]},
+      {id:9,doc:'COMP-0005',fecha:'2024-01-20',tipo:'COSTO',concepto:'Costo de ventas contado COMP-0004',total_debe:42000,total_haber:42000,cuadra:1,lineas:[
+        {orden:1,cuenta:'5101',nombre:'Costo de Ventas',debe:42000,haber:0},
+        {orden:2,cuenta:'1105',nombre:'Inventario de Mercancias',debe:0,haber:42000},
+      ]},
+      {id:10,doc:'AJUSTE-2024-01',fecha:'2024-01-31',tipo:'AJUSTE',concepto:'Depreciacion mensual activos fijos enero 2024',total_debe:1458.33,total_haber:1458.33,cuadra:1,lineas:[
+        {orden:1,cuenta:'5208',nombre:'Depreciaciones del Periodo',debe:1458.33,haber:0},
+        {orden:2,cuenta:'1290',nombre:'Depreciacion Acumulada',debe:0,haber:1458.33},
+      ]},
+    ],
+    balance_general:[
+      {tipo:'1',grupo:'Activo Corriente',cuenta:'1101',nombre:'Caja',naturaleza:'DEUDORA',saldo:117200},
+      {tipo:'1',grupo:'Activo Corriente',cuenta:'1102',nombre:'Bancos',naturaleza:'DEUDORA',saldo:237200},
+      {tipo:'1',grupo:'Activo Corriente',cuenta:'1103',nombre:'Cuentas por Cobrar Clientes',naturaleza:'DEUDORA',saldo:54400},
+      {tipo:'1',grupo:'Activo Corriente',cuenta:'1105',nombre:'Inventario de Mercancias',naturaleza:'DEUDORA',saldo:88714.29},
+      {tipo:'1',grupo:'Activo Corriente',cuenta:'1106',nombre:'IVA Credito Fiscal',naturaleza:'DEUDORA',saldo:10285.71},
+      {tipo:'1',grupo:'Activo No Corriente',cuenta:'1203',nombre:'Mobiliario y Equipo',naturaleza:'DEUDORA',saldo:45000},
+      {tipo:'1',grupo:'Activo No Corriente',cuenta:'1205',nombre:'Equipo de Computo',naturaleza:'DEUDORA',saldo:28000},
+      {tipo:'1',grupo:'Activo No Corriente',cuenta:'1290',nombre:'Depreciacion Acumulada',naturaleza:'ACREEDORA',saldo:-1458.33},
+      {tipo:'2',grupo:'Pasivo Corriente',cuenta:'2101',nombre:'Cuentas por Pagar Proveedores',naturaleza:'ACREEDORA',saldo:-96000},
+      {tipo:'2',grupo:'Pasivo Corriente',cuenta:'2103',nombre:'IVA Debito Fiscal',naturaleza:'ACREEDORA',saldo:-21600},
+      {tipo:'2',grupo:'Pasivo Corriente',cuenta:'2104',nombre:'ISR por Pagar',naturaleza:'ACREEDORA',saldo:-4800},
+      {tipo:'2',grupo:'Pasivo Corriente',cuenta:'2105',nombre:'Sueldos y Salarios por Pagar',naturaleza:'ACREEDORA',saldo:-43200},
+      {tipo:'2',grupo:'Pasivo Corriente',cuenta:'2106',nombre:'Cuota IGSS por Pagar',naturaleza:'ACREEDORA',saldo:-6082},
+      {tipo:'2',grupo:'Pasivo No Corriente',cuenta:'2201',nombre:'Prestamos Bancarios LP',naturaleza:'ACREEDORA',saldo:-113000},
+      {tipo:'3',grupo:'Patrimonio',cuenta:'3101',nombre:'Capital Pagado',naturaleza:'ACREEDORA',saldo:-310000},
+    ],
+    estado_resultados:[
+      {tipo:'4',grupo:'Ingresos Operativos',cuenta:'4101',nombre:'Ventas',saldo:180000},
+      {tipo:'5',grupo:'Costo de Ventas',cuenta:'5101',nombre:'Costo de Ventas',saldo:117000},
+      {tipo:'5',grupo:'Gastos de Operacion',cuenta:'5201',nombre:'Sueldos y Salarios',saldo:48000},
+      {tipo:'5',grupo:'Gastos de Operacion',cuenta:'5202',nombre:'Cuota Patronal IGSS',saldo:6082},
+      {tipo:'5',grupo:'Gastos de Operacion',cuenta:'5203',nombre:'Alquiler de Inmuebles',saldo:15000},
+      {tipo:'5',grupo:'Gastos de Operacion',cuenta:'5204',nombre:'Energia Electrica',saldo:3800},
+      {tipo:'5',grupo:'Gastos de Operacion',cuenta:'5205',nombre:'Telefono e Internet',saldo:2200},
+      {tipo:'5',grupo:'Gastos de Operacion',cuenta:'5206',nombre:'Papeleria y Utiles',saldo:1800},
+      {tipo:'5',grupo:'Depreciacion',cuenta:'5208',nombre:'Depreciaciones del Periodo',saldo:1458.33},
+    ],
+    impuestos:[
+      {tipo:'IVA',periodo:'2024-01',anio:2024,mes:1,base:180000,debito:21600,credito:10285.71,neto:11314.29,estado:'PENDIENTE',vencimiento:'2024-02-15',declaracion:''},
+      {tipo:'IVA',periodo:'2023-12',anio:2023,mes:12,base:150000,debito:18000,credito:8500,neto:9500,estado:'PAGADO',vencimiento:'2024-01-15',declaracion:'DGT-20240115-001'},
+      {tipo:'ISR_TRIM',periodo:'2024-T1',anio:2024,mes:3,base:105000,debito:5250,credito:0,neto:5250,estado:'PENDIENTE',vencimiento:'2024-04-30',declaracion:''},
+    ],
+    cierres:[],
+    kpis_mensuales:[
+      {anio:2024,mes:1,ingresos:180000,egresos:172540.33,resultado:7459.67},
+    ]
+  };
+}
+
+// ─────────────────────────────────────────────────────────────
+// NAVEGACIÓN
+// ─────────────────────────────────────────────────────────────
+function ir(pg, params){
+  document.querySelectorAll('.pag').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.lnk').forEach(l=>l.classList.remove('on'));
+  const el = document.getElementById('pag-'+pg);
+  if(el) el.classList.add('on');
+  const btn = document.querySelector(`.lnk[onclick*="'${pg}'"]`);
+  if(btn) btn.classList.add('on');
+  window.scrollTo(0,0);
+
+  if(pg==='mayor' && params?.cta) document.getElementById('may-cta').value = params.cta;
+  if(pg==='mayor') renderMayor();
+  if(pg==='diario'){
+    if(params?.doc) document.getElementById('d-bus').value = params.doc;
+    renderDiario();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// BALANCE DE COMPROBACIÓN
+// ─────────────────────────────────────────────────────────────
+function renderBalance(){
+  if(!DB) return;
+  const bc = DB.balance_comprobacion || [];
+  const k = DB.kpis || {};
+  const m = DB.meta || {};
+
+  document.getElementById('ph-bal-tit').textContent = 'Balance de Comprobación';
+  document.getElementById('ph-bal-met').textContent =
+    `${m.empresa||''} · NIT ${m.nit||''} · Ejercicio ${m.ejercicio||''}`;
+
+  // KPIs
+  document.getElementById('k-debe').textContent   = Q(k.total_debe||0);
+  document.getElementById('k-haber').textContent  = Q(k.total_haber||0);
+  document.getElementById('k-ctas').textContent   = bc.length;
+  const cuadra = k.cuadra !== false;
+  const kc = document.getElementById('k-cuadre');
+  kc.textContent = cuadra ? 'Cuadrado' : Q(Math.abs((k.total_debe||0)-(k.total_haber||0)));
+  kc.style.color = cuadra ? 'var(--grn)' : 'var(--red)';
+  document.getElementById('kpi-cuadre').style.borderTopColor = cuadra ? 'var(--grn)' : 'var(--red)';
+
+  let sTD=0,sTH=0,sSAD=0,sSAH=0;
+  const rows = bc.map(r=>{
+    sTD+=r.debe; sTH+=r.haber;
+    if(r.saldo>0) sSAD+=r.saldo; else sSAH+=Math.abs(r.saldo);
+    const nv = r.nivel||3;
+    return `<tr class="${nv<=1?'nv1':nv===2?'nv2':'nv3'}">
+      <td class="nc"><span class="cl" onclick="ir('mayor',{cta:'${r.cuenta}'})">${r.cuenta}</span></td>
+      <td>${r.nombre}</td>
+      <td><span class="bdg bdg-ok" style="font-size:7px">${tipoLabel(r.tipo)}</span></td>
+      <td class="num deb">${r.debe>0?N(r.debe):''}</td>
+      <td class="num hab">${r.haber>0?N(r.haber):''}</td>
+      <td class="num" style="color:${r.saldo>0?'var(--acc)':'var(--grn)'}">${r.saldo>0?N(r.saldo):''}</td>
+      <td class="num" style="color:var(--grn)">${r.saldo<0?N(Math.abs(r.saldo)):''}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('bal-tabla').innerHTML = `
+    <div class="al ${cuadra?'al-ok':'al-err'} mb16">
+      ${cuadra?'✓ Balance cuadrado — Debe = Haber en todas las cuentas':'✗ Diferencia: '+Q(Math.abs(sTD-sTH))+' — revisar partidas'}
+    </div>
+    <table class="ct">
+      <thead><tr><th>N° Cuenta</th><th>Nombre de la Cuenta</th><th>Tipo</th><th class="r">Debe</th><th class="r">Haber</th><th class="r">Saldo D</th><th class="r">Saldo H</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot>
+        <tr class="tot"><td colspan="3">SUMAS TOTALES</td><td class="num">${N(sTD)}</td><td class="num">${N(sTH)}</td><td class="num">${N(sSAD)}</td><td class="num">${N(sSAH)}</td></tr>
+        <tr class="tot2"><td colspan="3">TOTALES GENERALES</td><td class="num">${N(sTD)}</td><td class="num">${N(sTH)}</td><td class="num">${N(sSAD)}</td><td class="num">${N(sSAH)}</td></tr>
+      </tfoot>
+    </table>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// LIBRO MAYOR
+// ─────────────────────────────────────────────────────────────
+function initMayor(){
+  if(!DB) return;
+  const cat = (DB.catalogo||[]).filter(c=>c.acepta===1||c.acepta===true);
+  const sel = document.getElementById('may-cta');
+  sel.innerHTML = '<option value="">Todas las cuentas</option>' +
+    cat.map(c=>`<option value="${c.codigo}">${c.codigo} — ${c.nombre}</option>`).join('');
+}
+
+function renderMayor(){
+  if(!DB) return;
+  const filt = document.getElementById('may-cta').value;
+  const mayor = DB.libro_mayor || {};
+  const claves = filt ? [filt] : Object.keys(mayor);
+  const cont = document.getElementById('may-cont');
+
+  if(!claves.length){
+    cont.innerHTML='<div class="empty"><span class="ico">◇</span><p>Sin movimientos en el período</p></div>';return;
+  }
+
+  cont.innerHTML = claves.map(cta=>{
+    const d = mayor[cta];
+    if(!d) return `<div class="al al-w">Cuenta ${cta} sin movimientos registrados</div>`;
+    const movs = d.movimientos||[];
+    let sal=0, td=0, th=0;
+    const rows = movs.map(mv=>{
+      sal += (mv.debe||0)-(mv.haber||0);
+      td += mv.debe||0; th += mv.haber||0;
+      return `<tr>
+        <td class="nc">${mv.fecha}</td>
+        <td class="nc"><span class="dl" onclick="ir('diario',{doc:'${mv.doc}'})">${mv.doc}</span></td>
+        <td>${(mv.concepto||'').substring(0,50)}</td>
+        <td class="num deb">${mv.debe>0?N(mv.debe):''}</td>
+        <td class="num hab">${mv.haber>0?N(mv.haber):''}</td>
+        <td class="num" style="font-weight:500;color:${sal>=0?'var(--acc)':'var(--red)'}">${N(sal)}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="mc">
+      <div class="mc-h">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#c8b89a;">${cta} · ${tipoLabel(d.tipo)}</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:300;">${d.nombre}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(200,184,154,.5)">Saldo del período</div>
+          <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:300;color:#f0e4cc">${Q(Math.abs(sal))}</div>
+          <span class="cl" style="font-size:9px" onclick="renderBalance()">Ver en Balance ↗</span>
+        </div>
+      </div>
+      <table class="ct">
+        <thead><tr><th>Fecha</th><th>Comprobante</th><th>Concepto</th><th class="r">Debe</th><th class="r">Haber</th><th class="r">Saldo</th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr class="tot"><td colspan="3">TOTALES</td><td class="num">${N(td)}</td><td class="num">${N(th)}</td><td class="num">${N(sal)}</td></tr></tfoot>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────────
+// LIBRO DIARIO
+// ─────────────────────────────────────────────────────────────
+function renderDiario(){
+  if(!DB) return;
+  const tip = document.getElementById('d-tip').value;
+  const bus = (document.getElementById('d-bus').value||'').toLowerCase();
+  let pars = DB.libro_diario||[];
+  if(tip) pars = pars.filter(p=>p.tipo===tip);
+  if(bus) pars = pars.filter(p=>(p.doc||'').toLowerCase().includes(bus)||(p.concepto||'').toLowerCase().includes(bus));
+  pars = pars.sort((a,b)=>a.fecha.localeCompare(b.fecha));
+
+  const cont = document.getElementById('diario-cont');
+  if(!pars.length){cont.innerHTML='<div class="empty"><span class="ico">◆</span><p>Sin partidas</p></div>';return;}
+
+  cont.innerHTML = pars.map(p=>{
+    const ok = p.cuadra===1||p.cuadra===true;
+    const lineas = (p.lineas||[]).map(l=>`<tr>
+      <td class="nc"><span class="cl" onclick="ir('mayor',{cta:'${l.cuenta}'})">${l.cuenta}</span></td>
+      <td>${l.nombre}</td>
+      <td class="num deb">${l.debe>0?N(l.debe):''}</td>
+      <td class="num hab">${l.haber>0?N(l.haber):''}</td>
+    </tr>`).join('');
+
+    return `<div class="comp" id="comp-${(p.doc||'').replace(/[^a-z0-9]/gi,'_')}">
+      <div class="comp-h">
+        <div>
+          <div class="comp-n">${p.doc}</div>
+          <div class="comp-c">${p.concepto||''}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="comp-f">${p.fecha}</div>
+          <span class="bdg bdg-ok">${p.tipo}</span>
+          ${!ok?'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--red);margin-top:3px">⚠ No cuadra</div>':''}
+        </div>
+      </div>
+      <table class="ct">
+        <thead><tr><th>N° Cuenta</th><th>Nombre de la Cuenta</th><th class="r">Debe (Q)</th><th class="r">Haber (Q)</th></tr></thead>
+        <tbody>${lineas}</tbody>
+        <tfoot><tr class="tot"><td colspan="2" style="text-align:right">TOTALES</td><td class="num">${N(p.total_debe)}</td><td class="num">${N(p.total_haber)}</td></tr></tfoot>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────────
+// NUEVA PARTIDA (formulario interactivo, guarda en sesion[])
+// ─────────────────────────────────────────────────────────────
+function initPartida(){
+  document.getElementById('f-fec').value = hoy();
+  document.getElementById('f-per').value = mes();
+  if(!document.getElementById('lins').children.length){ addLin(); addLin(); }
+  const n = (DB?.libro_diario?.length||0) + sesion.length + 1;
+  if(!document.getElementById('f-doc').value)
+    document.getElementById('f-doc').value = 'COMP-'+String(n).padStart(4,'0');
+}
+
+function addLin(){
+  const cat = (DB?.catalogo||[]).filter(c=>c.acepta===1||c.acepta===true);
+  const id = ++linC;
+  const div = document.createElement('div');
+  div.className = 'lr'; div.id = 'lr-'+id;
+  div.innerHTML = `
+    <select id="lc-${id}" style="background:var(--hi);border:1px solid var(--rule2);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 8px;width:100%;color:var(--ink);" onchange="upLN(${id})">
+      <option value="">— cuenta —</option>
+      ${cat.map(c=>`<option value="${c.codigo}">${c.codigo} — ${c.nombre}</option>`).join('')}
+    </select>
+    <span id="ln-${id}" style="font-size:10px;color:var(--mut);font-family:'IBM Plex Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <input type="number" id="ld-${id}" step="0.01" placeholder="0.00" oninput="recalc()"
+      style="background:var(--hi);border:1px solid var(--rule2);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 8px;text-align:right;color:var(--acc);width:100%;">
+    <input type="number" id="lh-${id}" step="0.01" placeholder="0.00" oninput="recalc()"
+      style="background:var(--hi);border:1px solid var(--rule2);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 8px;text-align:right;color:var(--grn);width:100%;">
+    <button onclick="rmLin(${id})" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:13px;">✕</button>`;
+  document.getElementById('lins').appendChild(div);
+}
+
+function upLN(id){
+  const sel=document.getElementById('lc-'+id);
+  const sp=document.getElementById('ln-'+id);
+  const c=(DB?.catalogo||[]).find(x=>x.codigo===sel.value);
+  sp.textContent=c?c.nombre:'';
+}
+
+function rmLin(id){
+  const el=document.getElementById('lr-'+id);
+  if(el && document.getElementById('lins').children.length>2) el.remove();
+  recalc();
+}
+
+function recalc(){
+  let td=0,th=0;
+  document.querySelectorAll('[id^="ld-"]').forEach(i=>td+=+(i.value)||0);
+  document.querySelectorAll('[id^="lh-"]').forEach(i=>th+=+(i.value)||0);
+  document.getElementById('tot-d').textContent=Q(td);
+  document.getElementById('tot-h').textContent=Q(th);
+  const diff=Math.abs(td-th);
+  const bs=document.getElementById('bal-st');
+  if(diff<0.01){bs.textContent='✓ Cuadrado';bs.className='bal-ok';}
+  else{bs.textContent='✗ Diferencia: '+Q(diff);bs.className='bal-err';}
+}
+
+function getLins(){
+  const lins=[];
+  document.querySelectorAll('[id^="lc-"]').forEach(sel=>{
+    if(!sel.value)return;
+    const id=sel.id.split('-')[1];
+    const d=+(document.getElementById('ld-'+id).value)||0;
+    const h=+(document.getElementById('lh-'+id).value)||0;
+    if(d>0||h>0) lins.push({cuenta:sel.value,nombre:document.getElementById('ln-'+id).textContent,debe:d,haber:h});
+  });
+  return lins;
+}
+
+function guardarP(){
+  const doc=document.getElementById('f-doc').value.trim();
+  const fec=document.getElementById('f-fec').value;
+  const tip=document.getElementById('f-tip').value;
+  const fac=document.getElementById('f-fac').value.trim();
+  const nit=document.getElementById('f-nit').value.trim();
+  const per=document.getElementById('f-per').value;
+  const con=document.getElementById('f-con').value.trim();
+  const lins=getLins();
+
+  if(!doc||!fec){document.getElementById('f-alert').innerHTML='<div class="al al-err">Complete N° comprobante y fecha</div>';return;}
+  if(!lins.length){document.getElementById('f-alert').innerHTML='<div class="al al-err">Agregue al menos una línea</div>';return;}
+  const td=lins.reduce((a,l)=>a+l.debe,0);
+  const th=lins.reduce((a,l)=>a+l.haber,0);
+  if(Math.abs(td-th)>0.01){document.getElementById('f-alert').innerHTML='<div class="al al-err">La partida no cuadra — Debe ≠ Haber · Diferencia: '+Q(Math.abs(td-th))+'</div>';return;}
+
+  const p={id:Date.now(),doc,fecha:fec,tipo:tip,factura:fac,nit,periodo:per,concepto:con,lineas:lins.map((l,i)=>({orden:i+1,cuenta:l.cuenta,nombre:l.nombre,debe:l.debe,haber:l.haber})),total_debe:td,total_haber:th,cuadra:1,ts:new Date().toISOString()};
+  sesion.push(p);
+  document.getElementById('f-alert').innerHTML=`<div class="al al-ok">✓ Partida ${doc} guardada en sesión — <strong>Para guardar en Access:</strong> Call NuevaPartida("${doc}","${fec}","${tip}","${con}")</div>`;
+  document.getElementById('partidas-guardadas-sec').style.display='';
+  renderSesionGuardada();
+  limpiarP();
+  toast('Partida '+doc+' guardada en sesión');
+}
+
+function renderSesionGuardada(){
+  document.getElementById('partidas-guardadas').innerHTML = sesion.map(p=>`
+    <div class="comp"><div class="comp-h">
+      <div><div class="comp-n">${p.doc}</div><div class="comp-c">${p.concepto}</div></div>
+      <div style="text-align:right"><div class="comp-f">${p.fecha}</div><span class="bdg bdg-ok">${p.tipo}</span></div>
+    </div><table class="ct"><thead><tr><th>Cuenta</th><th>Nombre</th><th class="r">Debe</th><th class="r">Haber</th></tr></thead>
+    <tbody>${p.lineas.map(l=>`<tr><td class="nc">${l.cuenta}</td><td>${l.nombre}</td><td class="num deb">${l.debe>0?N(l.debe):''}</td><td class="num hab">${l.haber>0?N(l.haber):''}</td></tr>`).join('')}</tbody>
+    <tfoot><tr class="tot"><td colspan="2">TOTALES</td><td class="num">${N(p.total_debe)}</td><td class="num">${N(p.total_haber)}</td></tr></tfoot>
+    </table></div>`).join('');
+}
+
+function limpiarP(){
+  ['f-fac','f-nit','f-con'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('lins').innerHTML='';
+  linC=0;addLin();addLin();recalc();
+}
+
+function tpl(t){
+  document.getElementById('lins').innerHTML='';linC=0;
+  function al(cn,d,h){
+    addLin();const id=linC;
+    const sel=document.getElementById('lc-'+id);sel.value=cn;upLN(id);
+    if(d>0)document.getElementById('ld-'+id).value=d;
+    if(h>0)document.getElementById('lh-'+id).value=h;
+  }
+  if(t==='compra'){document.getElementById('f-tip').value='COMPRA';document.getElementById('f-con').value='Compra de mercancias a proveedor';al('1105',1000,0);al('1106',120,0);al('2101',0,1120);}
+  else if(t==='venta'){document.getElementById('f-tip').value='VENTA';document.getElementById('f-con').value='Venta de mercancias a cliente';al('1103',1120,0);al('4101',0,1000);al('2103',0,120);}
+  else if(t==='planilla'){document.getElementById('f-tip').value='PLANILLA';document.getElementById('f-con').value='Planilla de sueldos del periodo';al('5201',5000,0);al('5202',634,0);al('2105',0,4366);al('2106',0,634);al('2104',0,634);}
+  recalc();toast('Plantilla cargada — ajuste los montos','w');
+}
+
+// ─────────────────────────────────────────────────────────────
+// CATÁLOGO
+// ─────────────────────────────────────────────────────────────
+function renderCat(){
+  if(!DB) return;
+  const b=(document.getElementById('cat-b').value||'').toLowerCase();
+  const t=document.getElementById('cat-t').value;
+  let cat=DB.catalogo||[];
+  if(b) cat=cat.filter(c=>c.codigo.includes(b)||c.nombre.toLowerCase().includes(b));
+  if(t) cat=cat.filter(c=>c.tipo===t);
+  document.getElementById('cat-tbody').innerHTML=cat.map(c=>`<tr>
+    <td class="nc">${c.codigo}</td>
+    <td>${c.nombre}</td>
+    <td><span class="bdg bdg-ok" style="font-size:7px">${tipoLabel(c.tipo)}</span></td>
+    <td class="nc" style="font-size:10px">${c.naturaleza}</td>
+    <td class="nc">${c.nivel}</td>
+  </tr>`).join('');
+}
+
+// ─────────────────────────────────────────────────────────────
+// CIERRE
+// ─────────────────────────────────────────────────────────────
+function checkCuadre(){
+  if(!DB) return;
+  const k=DB.kpis||{};
+  const ok=k.cuadra!==false;
+  document.getElementById('p1r').innerHTML=`<div class="al ${ok?'al-ok':'al-err'} mt12">${ok?'✓ Balance cuadrado — puede continuar':'✗ Diferencia: '+Q(Math.abs((k.total_debe||0)-(k.total_haber||0)))+' — corrija antes de continuar'}</div>`;
+  if(ok){document.getElementById('pn2').className='paso-n av';}
+}
+
+function calcRes(){
+  if(!DB) return;
+  const er=DB.estado_resultados||[];
+  let ing=0,egr=0;
+  er.forEach(r=>{if(r.tipo==='4')ing+=r.saldo||0;else egr+=r.saldo||0;});
+  const res=ing-egr;
+  document.getElementById('p3r').innerHTML=`<div class="al ${res>=0?'al-ok':'al-err'} mt12">
+    Ingresos: <strong>${Q(ing)}</strong> · Egresos: <strong>${Q(egr)}</strong><br>
+    <strong style="font-size:12px">${res>=0?'▲ Utilidad':'▼ Pérdida'}: ${Q(Math.abs(res))}</strong>
+  </div>`;
+  document.getElementById('pn4').className='paso-n av';
+}
+
+function renderCierres(){
+  if(!DB) return;
+  const cs=DB.cierres||[];
+  const cont=document.getElementById('cierre-hist');
+  if(!cs.length){cont.innerHTML='<div class="muted" style="font-family:\'IBM Plex Mono\',monospace;font-size:9px">Sin cierres registrados</div>';return;}
+  cont.innerHTML=`<table class="ct"><thead><tr><th>Ejercicio</th><th class="r">Ingresos</th><th class="r">Egresos</th><th class="r">Resultado</th><th>Estado</th></tr></thead>
+    <tbody>${cs.map(c=>`<tr><td class="nc">${c.anio}</td><td class="num hab">${Q(c.ingresos)}</td><td class="num deb">${Q(c.egresos)}</td><td class="num" style="color:${c.resultado>=0?'var(--grn)':'var(--red)'};font-weight:600">${Q(Math.abs(c.resultado))}</td><td><span class="bdg ${c.estado==='CERRADO'?'bdg-ok':'bdg-pen'}">${c.estado}</span></td></tr>`).join('')}</tbody></table>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// IMPUESTOS
+// ─────────────────────────────────────────────────────────────
+function tabI(t,el){
+  ['iva','isr','cal'].forEach(x=>document.getElementById('imp-'+x).style.display='none');
+  document.getElementById('imp-'+t).style.display='';
+  document.querySelectorAll('.tabs .tab').forEach(x=>x.classList.remove('on'));
+  if(el)el.classList.add('on');
+  if(t==='cal')renderCal();
+}
+
+function renderImpuestos(){
+  if(!DB) return;
+  const imps=DB.impuestos||[];
+  const iva=imps.filter(i=>i.tipo==='IVA');
+  const isr=imps.filter(i=>i.tipo.startsWith('ISR'));
+
+  document.getElementById('imp-iva').innerHTML=`<table class="ct"><thead><tr><th>Período</th><th class="r">Base</th><th class="r">IVA Débito</th><th class="r">IVA Crédito</th><th class="r">Neto a Pagar</th><th>Vencimiento</th><th>Estado</th></tr></thead><tbody>
+    ${iva.length?iva.map(i=>`<tr>
+      <td class="nc">${i.periodo}</td><td class="num">${N(i.base)}</td>
+      <td class="num deb">${N(i.debito)}</td><td class="num hab">${N(i.credito)}</td>
+      <td class="num" style="font-weight:600;color:${i.neto>0?'var(--red)':'var(--grn)'}">${N(Math.max(0,i.neto))}</td>
+      <td class="nc" style="font-size:10px">${i.vencimiento||'—'}</td>
+      <td><span class="bdg ${i.estado==='PAGADO'?'bdg-ok':i.estado==='PENDIENTE'?'bdg-pen':'bdg-venc'}">${i.estado}</span></td>
+    </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--mut);font-family:\'IBM Plex Mono\',monospace;font-size:9px">Sin declaraciones de IVA</td></tr>'}
+  </tbody></table>`;
+
+  document.getElementById('imp-isr').innerHTML=`<table class="ct"><thead><tr><th>Tipo</th><th>Período</th><th class="r">Base</th><th class="r">ISR</th><th class="r">A Pagar</th><th>Vencimiento</th><th>Estado</th></tr></thead><tbody>
+    ${isr.length?isr.map(i=>`<tr>
+      <td><span class="bdg bdg-ok" style="font-size:7px">${i.tipo}</span></td>
+      <td class="nc">${i.periodo}</td><td class="num">${N(i.base)}</td>
+      <td class="num deb">${N(i.debito)}</td>
+      <td class="num" style="font-weight:600">${N(Math.max(0,i.neto))}</td>
+      <td class="nc" style="font-size:10px">${i.vencimiento||'—'}</td>
+      <td><span class="bdg ${i.estado==='PAGADO'?'bdg-ok':'bdg-pen'}">${i.estado}</span></td>
+    </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--mut);font-family:\'IBM Plex Mono\',monospace;font-size:9px">Sin declaraciones de ISR</td></tr>'}
+  </tbody></table>`;
+}
+
+function renderCal(){
+  const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const anio=(DB?.meta?.ejercicio)||2024;
+  const hoyStr=hoy();
+  const imps=DB?.impuestos||[];
+  document.getElementById('imp-cal').innerHTML=`
+    <div class="nota" style="margin-bottom:14px"><strong>Calendario SAT ${anio}</strong> — IVA día 15 del mes siguiente · ISR trimestral: abril, julio, octubre, marzo</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${meses.map((m,i)=>{
+        const mm=String(i+1).padStart(2,'0');
+        const per=`${anio}-${mm}`;
+        const vence=`${anio}-${String(i+2>12?1:i+2).padStart(2,'0')}-15`;
+        const tieneIVA=imps.find(x=>x.tipo==='IVA'&&x.periodo===per);
+        const vencido=vence<hoyStr&&!tieneIVA;
+        const prox=vence>=hoyStr&&vence<=hoyStr.slice(0,7)+'-'+hoyStr.slice(8);
+        const trims=[3,6,9,12].includes(i+1);
+        return `<div style="border:1px solid var(--rule2);border-left:3px solid ${tieneIVA?'var(--grn)':vencido?'var(--red)':prox?'var(--gld)':'var(--rule)'};padding:10px 12px;background:var(--hi);">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--mut);margin-bottom:3px">${m} ${anio}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;color:${tieneIVA?'var(--grn)':vencido?'var(--red)':'var(--ink)'}">${tieneIVA?'✓ IVA pagado':vencido?'⚠ IVA vencido':'○ IVA pendiente'}</div>
+          ${trims?`<div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--blu);margin-top:3px">↯ ISR trimestral</div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// ESTADOS FINANCIEROS
+// ─────────────────────────────────────────────────────────────
+function tabEF(t,el){
+  ['bg','er'].forEach(x=>document.getElementById('ef-'+x).style.display='none');
+  document.getElementById('ef-'+t).style.display='';
+  document.querySelectorAll('.tabs .tab').forEach(x=>x.classList.remove('on'));
+  if(el)el.classList.add('on');
+}
+
+function renderEstados(){
+  if(!DB) return;
+  const m=DB.meta||{};
+  const bg=DB.balance_general||[];
+  const er=DB.estado_resultados||[];
+
+  const hdr=t=>`<div style="text-align:center;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid var(--rule)">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--mut);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px">${m.empresa||''}</div>
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:300">${t}</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--mut);margin-top:4px">NIT ${m.nit||''} · Ejercicio ${m.ejercicio||''} · (Cifras en Quetzales)</div>
+  </div>`;
+
+  // Grupos Balance General
+  const actC=bg.filter(r=>r.tipo==='1'&&r.grupo?.includes('Corriente')&&r.saldo>0);
+  const actNC=bg.filter(r=>r.tipo==='1'&&!r.grupo?.includes('Corriente'));
+  const pasC=bg.filter(r=>r.tipo==='2'&&r.grupo?.includes('Corriente'));
+  const pasNC=bg.filter(r=>r.tipo==='2'&&!r.grupo?.includes('Corriente'));
+  const pat=bg.filter(r=>r.tipo==='3');
+  const ing=er.filter(r=>r.tipo==='4');
+  const egr=er.filter(r=>r.tipo==='5');
+  const util=ing.reduce((a,r)=>a+(r.saldo||0),0)-egr.reduce((a,r)=>a+(r.saldo||0),0);
+
+  const fRow=(r,indent)=>`<tr class="${indent?'nv3':''}"><td class="nc">${r.cuenta}</td><td>${r.nombre}</td><td class="num" style="color:${r.saldo>=0?'var(--acc)':'var(--grn)'}">${N(Math.abs(r.saldo))}</td></tr>`;
+  const fSum=(label,arr)=>{ const t=arr.reduce((a,r)=>a+Math.abs(r.saldo||0),0); return `<tr class="tot"><td colspan="2">${label}</td><td class="num">${N(t)}</td></tr>`; };
+
+  document.getElementById('ef-bg').innerHTML=`<div style="max-width:660px;margin:0 auto;padding:16px 0">
+    ${hdr('BALANCE GENERAL')}
+    <table class="ct"><thead><tr><th>N° Cuenta</th><th>Nombre</th><th class="r">Q</th></tr></thead><tbody>
+      <tr class="nv1"><td colspan="3">Activo Corriente</td></tr>
+      ${actC.map(r=>fRow(r,true)).join('')}${fSum('Total Activo Corriente',actC)}
+      <tr class="nv1"><td colspan="3">Activo No Corriente</td></tr>
+      ${actNC.map(r=>fRow(r,true)).join('')}${fSum('Total Activo No Corriente',actNC)}
+      <tr class="tot2"><td colspan="2">TOTAL ACTIVO</td><td class="num">${N([...actC,...actNC].reduce((a,r)=>a+Math.abs(r.saldo||0),0))}</td></tr>
+      <tr class="nv1"><td colspan="3">Pasivo Corriente</td></tr>
+      ${pasC.map(r=>fRow(r,true)).join('')}${fSum('Total Pasivo Corriente',pasC)}
+      <tr class="nv1"><td colspan="3">Pasivo No Corriente</td></tr>
+      ${pasNC.map(r=>fRow(r,true)).join('')}${fSum('Total Pasivo',pasNC)}
+      <tr class="nv1"><td colspan="3">Patrimonio / Capital</td></tr>
+      ${pat.map(r=>fRow(r,true)).join('')}
+      ${util?`<tr class="nv3"><td class="nc">—</td><td>Resultado del período</td><td class="num" style="color:${util>=0?'var(--grn)':'var(--red)'}">${N(Math.abs(util))}</td></tr>`:''}
+      <tr class="tot"><td colspan="2">Total Patrimonio</td><td class="num">${N(pat.reduce((a,r)=>a+Math.abs(r.saldo||0),0)+Math.abs(util))}</td></tr>
+      <tr class="tot2"><td colspan="2">TOTAL PASIVO Y PATRIMONIO</td><td class="num">${N([...pasC,...pasNC,...pat].reduce((a,r)=>a+Math.abs(r.saldo||0),0)+Math.abs(util))}</td></tr>
+    </tbody></table></div>`;
+
+  document.getElementById('ef-er').innerHTML=`<div style="max-width:560px;margin:0 auto;padding:16px 0">
+    ${hdr('ESTADO DE RESULTADOS')}
+    <table class="ct"><thead><tr><th>N° Cuenta</th><th>Nombre</th><th class="r">Q</th></tr></thead><tbody>
+      <tr class="nv1"><td colspan="3">Ingresos</td></tr>
+      ${ing.map(r=>`<tr><td class="nc">${r.cuenta}</td><td>${r.nombre}</td><td class="num hab">${N(r.saldo||0)}</td></tr>`).join('')}
+      <tr class="tot"><td colspan="2">Total Ingresos</td><td class="num">${N(ing.reduce((a,r)=>a+(r.saldo||0),0))}</td></tr>
+      <tr class="nv1"><td colspan="3">Costos y Gastos</td></tr>
+      ${egr.map(r=>`<tr><td class="nc">${r.cuenta}</td><td>${r.nombre}</td><td class="num deb">${N(r.saldo||0)}</td></tr>`).join('')}
+      <tr class="tot"><td colspan="2">Total Costos y Gastos</td><td class="num">${N(egr.reduce((a,r)=>a+(r.saldo||0),0))}</td></tr>
+      <tr class="tot2"><td colspan="2">${util>=0?'UTILIDAD':'PÉRDIDA'} DEL EJERCICIO</td><td class="num" style="color:${util>=0?'#afffaa':'#ffaaaa'}">${N(Math.abs(util))}</td></tr>
+    </tbody></table></div>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// UTILITARIOS
+// ─────────────────────────────────────────────────────────────
+function tipoLabel(t){
+  const m={1:'Activo',2:'Pasivo',3:'Patrimonio',4:'Ingreso',5:'Gasto'};
+  return m[t]||t||'—';
+}
+
+// ─────────────────────────────────────────────────────────────
+// ARRANQUE
+// ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', ()=>{
+  cargarDatos();
+  document.getElementById('f-fec') && (document.getElementById('f-fec').value = hoy());
+  document.getElementById('f-per') && (document.getElementById('f-per').value = mes());
+});
+</script>
+</body>
+</html>
